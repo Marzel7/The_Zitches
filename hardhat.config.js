@@ -11,11 +11,16 @@ require("@nomiclabs/hardhat-web3");
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "hardhat",
+  defaultNetwork: "localhost",
+
   paths: {
     artifacts: './src/artifacts',
   },
+
   networks: {
+    localhost: {
+      url: "http://127.0.0.1:8545"
+    },
     hardhat: {
       chainId: 1337,
     },
