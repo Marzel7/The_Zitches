@@ -1,60 +1,148 @@
-import '../App.css';
-import { useState } from 'react';
-import { ethers } from 'ethers'
-import Greeter from '../artifacts/contracts/Greeter.sol/Greeter.json'
-//import GreeterArt from '../contracts/contract-address.json'
+import { useEffect, useState } from 'react'
+import { Spinner } from 'react-bootstrap'
+import { ethers } from 'ethers';
 
-// Update with the contract address logged out to the CLI when it was deployed 
-const greeterAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+// Import ABI
+import SimpleStorage from '../artifacts/contracts/SimpleStorage.sol/SimpleStorage.json'
+
+
+// Import CSS
+import '../App.css'
+
+// Import Components
+import Navbar from './Navbar'
 
 function App() {
-  // store greeting in local state
-  const [greeting, setGreetingValue] = useState()
+	// SimpleStorage Contract
+  const SimpleStorageAddr = '0x0165878A594ca255338adfa4d48449f69242Eb8F'
+	const [simpleStorage, setSimpleStorage] = useState(null)
 
-  // request access to the user's MetaMask account
-  async function requestAccount() {
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
+	// User & Contract Info
+	const [account, setAccount] = useState(null)
+	const [number, setNumber] = useState(0) // Value of the number in the smart contract
+	const [myNumber, setMyNumber] = useState(0) // Value set by the user to change
 
-  }
+	// Loading & Error Messages
+	const [isLoading, setIsLoading] = useState(true)
+	const [message, setMessage] = useState("")
 
-  // call the smart contract, read the current greeting value
-  async function fetchGreeting() {
-    if (typeof window.ethereum !== 'undefined') {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
+	useEffect(() => {
+
+		// Only call this to connect with user account
+		if (!account) {
+			console.log('Establishing connection with MetaMask...')
+			loadBlockchainData()
+		} else {
+			// Showcase useEffect being called everytime number updates.
+			console.log('Number', number)
+		}
+
+	}, [number, account])
+
+	const loadBlockchainData = async () => {
+
+		try {
+
+			// Await user login
+			setMessage('Awaiting MetaMask Login...')
+			await window.ethereum.enable();
+
+			// Load Web3
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const contract = new ethers.Contract(greeterAddress, Greeter.abi, signer)
-      try {
-        const data = await contract.greet()
-        console.log('data: ', data)
-      } catch (err) {
-        console.log("Error: ", err)
-      }
-    }
-  }
+			// Load Account
+			const accounts = await provider.listAccounts()
+			setAccount(accounts[0])
 
-  // call the smart contract, send an update
-  async function setGreeting() {
-    if (!greeting) return
-    if (typeof window.ethereum !== 'undefined') {
-      await requestAccount()
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner()
-      const contract = new ethers.Contract(greeterAddress, Greeter.abi, signer)
-      const transaction = await contract.setGreeting(greeting)
-      await transaction.wait()
-      fetchGreeting()
-    }
-  }
+			// Fetch Network ID
+			const networkId = await provider.getNetwork()
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <button onClick={fetchGreeting}>Fetch Greeting</button>
-        <button onClick={setGreeting}>Set Greeting</button>
-        <input onChange={e => setGreetingValue(e.target.value)} placeholder="Set greeting" />
-      </header>
-    </div>
-  );
+			// Load SimpleStorage contract
+			const simpleStorage = new ethers.Contract(SimpleStorageAddr, SimpleStorage.abi, signer)
+			setSimpleStorage(simpleStorage)
+
+			// Fetch current value
+			let result = await simpleStorage.get()
+			setNumber(result.toNumber())
+
+			setMessage("")
+			setIsLoading(false)
+
+		}
+		catch (error) {
+      setMessage('MetaMask not detected, or contract not deployed to current network')
+		}
+
+	}
+
+	const setNumberHandler = async (e) => {
+		e.preventDefault()
+
+		if (myNumber < 0) {
+			window.alert('Number cannot be negative')
+			return
+		}
+
+		if (myNumber === number) {
+			window.alert('Number cannot be equal to current value')
+			return
+		}
+
+		let tx = await simpleStorage.set(myNumber)
+		let receipt = await tx.wait();
+    console.log("Transaction receipt is ", receipt);
+
+	}
+
+	const getNumberHandler = async () => {
+		let result = await simpleStorage.get()
+		setNumber(result.toNumber())
+	}
+
+	return (
+		<div>
+
+			<Navbar account={account} />
+
+			<main role="main" className="container-fluid text-center">
+
+				{isLoading ? (
+
+					<div>
+						<Spinner animation="border" className="mt-4 mb-2" />
+						<p>{message}</p>
+					</div>
+
+				) : (
+					<div className="col-lg-12">
+
+						<div className="row">
+							<div className="col">
+								<h1 className="my-5">Simple Storage w/ Hooks</h1>
+								<p className="number">{number}</p>
+							</div>
+						</div>
+
+						<div className="row content">
+							<div className="col user-controls">
+
+								<button onClick={getNumberHandler}>Get</button>
+
+								<form onSubmit={setNumberHandler}>
+									<input type="number" placeholder="Enter a number" onChange={(e) => setMyNumber(e.target.value)} />
+									<button type="submit">Set</button>
+								</form>
+
+							</div>
+						</div>
+
+					</div>
+				)}
+
+			</main>
+
+		</div>
+	);
 }
 
-export default App;
+export default App
