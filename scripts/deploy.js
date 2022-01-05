@@ -32,7 +32,7 @@ async function main() {
   // verify contracts
 
   //npx hardhat clean will clear `ENOENT: no such file or directory` error
-  if(network.name != "hardhat") {
+  if(network.name == "rinkeby") {
      //wait for 60 seconds before verify
     await sleep.sleep(60)
     await hre.run("verify:verify", {
@@ -54,7 +54,7 @@ function saveFrontendFiles() {
   fs.writeFileSync(
     contractsDir + "/contract-address.json",
     JSON.stringify({
-        simpleStorageAddr: simpleStorage.address,
+        storageAddr: simpleStorage.address,
         greeterAddr: greeter.address,
       }, undefined, 2)
   );

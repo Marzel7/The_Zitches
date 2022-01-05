@@ -11,7 +11,4 @@ contract SimpleStorage {
         return storedData;
     }
 
-    function name() public view returns (uint256) {
-        return 1;
-    }
 }
