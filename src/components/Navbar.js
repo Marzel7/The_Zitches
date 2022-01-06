@@ -1,28 +1,31 @@
-import logo from '../logo.svg'
+import {
+  Box,
+  Flex,
+  Button,
+  useColorModeValue,
+  Stack,
+  useColorMode,
+} from '@chakra-ui/react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import MenuItems from './subcomponents/navbar/MenuItems';
 
-const Navbar = ({ account }) => {
-    return (
-        <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a
-                className="navbar-brand col-sm-3 col-md-2 mr-0"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <img src={logo} className="App-logo" alt="logo" />
-                Simple Storage w/ Hooks
-            </a>
-
-            {account && (
-                <a
-                    className="nav-link small mx-3"
-                    href={`https://etherscan.io/address/${account}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                </a>
-            )}
-        </nav>
-    );
+export default function Nav() {
+  const { colorMode, toggleColorMode } = useColorMode();
+  return (
+    <>
+      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+          <Box>FX Finance</Box>
+            <Flex alignItems={'center'}>
+                <Stack direction={'row'} spacing={7}>
+                <Button onClick={toggleColorMode}>
+                    {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                </Button>
+                    <MenuItems></MenuItems>
+                </Stack>
+            </Flex>
+        </Flex>
+      </Box>
+    </>
+  );
 }
-
-export default Navbar;

@@ -1,12 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import {  ColorModeScript } from '@chakra-ui/react';
+import { DAppProvider, Hardhat } from "@usedapp/core";
+
+
+const config = {
+  readOnlyChainId: Hardhat.chainId
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <ColorModeScript initialColorMode="light"></ColorModeScript>
-      <App />
+    <DAppProvider config={config}>
+    <App />
+      </DAppProvider>
     </React.StrictMode>,
   document.getElementById('root')
 );
