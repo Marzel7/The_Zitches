@@ -7,7 +7,9 @@ import { Contract } from '@ethersproject/contracts';
 import {
 	useEthers, useTokenBalance, useEtherBalance, useContractCall, useContractFunction, useNotifications
 } from '@usedapp/core'
-import Layout from './components/Layout'
+
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+
 
 // Import ABI
 import SimpleStorage from './contracts/abis/SimpleStorage.json'
@@ -18,15 +20,28 @@ import './App.css'
 
 // Import Components
 import Navbar from './components/Navbar';
+import Block from './components/Block';
+import Prices from './components/Prices'
+import Accounts from './components/Accounts';
 
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 	return (
     <ChakraProvider>
       <Navbar isOpen={isOpen} onClose={onClose}/>
+      <Router>
+      <main>
+        <Routes>
+          <Route path="/block" element={<Block/>}/>
+          <Route path="/prices" element={<Prices/>}/>
+          <Route path="/accounts" element={<Accounts/>}/>
+        </Routes>
+      </main>
+    </Router>
     </ChakraProvider>
 	);
 }
+
 
 
 export default App
