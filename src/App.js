@@ -8,7 +8,7 @@ import {
 	useEthers, useTokenBalance, useEtherBalance, useContractCall, useContractFunction, useNotifications
 } from '@usedapp/core'
 
-import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 
 // Import ABI
@@ -29,16 +29,12 @@ function App() {
 	return (
     <ChakraProvider>
       <Navbar isOpen={isOpen} onClose={onClose}/>
-      <Router>
-      <main>
         <Routes>
-          <Route path="/block" element={<Block/>}/>
-          <Route path="/prices" element={<Prices/>}/>
-          <Route path="/accounts" element={<Accounts/>}/>
+            <Route path='/account' element={<Accounts/>}></Route>
+            <Route path='/price' element={<Prices/>}></Route>
+            <Route path='/block' element={<Block/>}></Route>
         </Routes>
-      </main>
-    </Router>
-    </ChakraProvider>
+     </ChakraProvider>
 	);
 }
 

@@ -3,6 +3,6 @@ import { HStack, Flex, Box, Text } from '@chakra-ui/layout'
 
 export default function Block() {
     return (
-        <div>Yo!</div>
+        <div>Block</div>
     )
 }
