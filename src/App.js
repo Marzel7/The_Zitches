@@ -19,10 +19,10 @@ import SimpleStorageAddr from './contracts/contract-address.json'
 import './App.css'
 
 // Import Components
-import Navbar from './components/Navbar';
-import Block from './components/Block';
-import Prices from './components/Prices'
-import Balance from './components/Balance';
+import Navbar from './pages/Navbar';
+import Block from './pages/Block';
+import Prices from './pages/Prices'
+import Balance from './pages/Balance';
 
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -33,6 +33,7 @@ function App() {
             <Route path='/account' element={<Balance/>}></Route>
             <Route path='/price' element={<Prices/>}></Route>
             <Route path='/block' element={<Block/>}></Route>
+            <Route path='/' element={<Block/>}></Route>
         </Routes>
      </ChakraProvider>
 	);

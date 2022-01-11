@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { HStack } from '@chakra-ui/layout'
-import MenuItems from './subcomponents/navbar/MenuItems';
+import MenuItems from '../components/subcomponents/navbar/MenuItems';
 import { Link } from "react-router-dom";
 
 export default function Nav() {
