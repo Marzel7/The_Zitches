@@ -22,7 +22,7 @@ import './App.css'
 import Navbar from './components/Navbar';
 import Block from './components/Block';
 import Prices from './components/Prices'
-import Accounts from './components/Accounts';
+import Balance from './components/Balance';
 
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -30,7 +30,7 @@ function App() {
     <ChakraProvider>
       <Navbar isOpen={isOpen} onClose={onClose}/>
         <Routes>
-            <Route path='/account' element={<Accounts/>}></Route>
+            <Route path='/account' element={<Balance/>}></Route>
             <Route path='/price' element={<Prices/>}></Route>
             <Route path='/block' element={<Block/>}></Route>
         </Routes>
