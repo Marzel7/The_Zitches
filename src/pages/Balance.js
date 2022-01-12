@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 // import { TextInline } from '../typography/Text'
 // import { Title } from '../typography/Title'
 
-import { AccountButton } from '../components/account/AccountButton'
+// import { AccountButton } from '../components/account/AccountButton'
 
 const STAKING_CONTRACT = '0x00000000219ab540356cBB839Cbe05303d7705Fa'
 
@@ -33,16 +33,12 @@ export default function Balance() {
                 fontWeight='semibold'
                 ml='0px'
                 >Balance</Text>
-              <AccountButton />
+              {/* <AccountButton /> */}
           </Stack>
             <Box
-                // justify={'center'}
                 spacing={18}
-                // bg='gray.400'
-                // p={8}
-                // overflow='hidden'
                 >
-                  <Stack spacing={2}>
+            <Stack spacing={2}>
 
           {stakingBalance && (
                 <Box>
@@ -73,8 +69,7 @@ export default function Balance() {
             )}
             </Stack>
             </Box>
-            
-        </Box>
+          </Box>
     </>
   )
 }

@@ -28,10 +28,30 @@ export const AccountButton = () => {
         {account ? (
             <>
              {/* <Text onClick={() => setShowModal(!showModal)}>{ens ?? shortenAddress(account)}</Text> */}
-             <Button variant='outline' onClick={() => deactivate()}>Disconnect</Button>
+             <Button
+                    px={5}
+                    size='sm'
+                    variant='outline'
+                    _hover={{
+                        boxShadow: 'sm',
+                        background: "gray.900",
+                        color: "gray.100",
+                    }}
+                    _active= "gray.900"
+                    onClick={() => deactivate()}>Disconnect</Button>
             </>
         ) :  (
-            <Button  variant='outline' onClick={activate}>Connect</Button>
+            <Button
+                    px={5}
+                    size='sm'
+                    variant='outline'
+                    _hover={{
+                        boxShadow: 'sm',
+                        background: "gray.900",
+                        color: "gray.100",
+                      }}
+                    _active= "gray.900"
+                    onClick={activate}>Connect</Button>
         )}
         </>
     )
