@@ -1,7 +1,8 @@
 import React from 'react'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { Stack, Text, Box } from '@chakra-ui/react'
+import { Stack, Text, Box, Divider } from '@chakra-ui/react'
+import { ethers } from "ethers";
 // import { Container, ContentBlock, ContentRow, MainContent, Section, SectionRow } from '../components/base/base'
 // import { Text } from '../typography/Text'
 // import { TextInline } from '../typography/Text'
@@ -19,43 +20,60 @@ export default function Balance() {
   return (
     <>
         <Box w='720px'
-             ml='260px'>
+             ml='350px'
+             >
           <Stack
                 justify='space-between'
                 isInline
-                p={4}
+                p={3}
                 align='baseline'
                 >
               <Text
-                fontSize={30}
+                fontSize={24}
                 fontWeight='semibold'
                 ml='0px'
                 >Balance</Text>
               <AccountButton />
           </Stack>
             <Box
-                justify={'center'}
-                mx='auto'
-                bg='gray.400'
-                p={10}
-                overflow='hidden'>
-            </Box>
-          {/* {stakingBalance && (
+                // justify={'center'}
+                spacing={18}
+                // bg='gray.400'
+                // p={8}
+                // overflow='hidden'
+                >
+                  <Stack spacing={2}>
+
+          {stakingBalance && (
                 <Box>
-                <Text>ETH2 staking contract holds:</Text> {formatEther(stakingBalance)}{' '}
-                <Text>ETH</Text>
+                  <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5} align='baseline'>
+                    <Text color='gray.600'>ETH2 staking contract holds:</Text>
+                    <Text color='gray.500'>{ethers.utils.formatEther(stakingBalance)}{''}</Text>
+                    <Text color='gray.600'>eth</Text>
+                  </Stack>
                 </Box>
-            )} */}
-            {/* {account && (
-                <Box>
-                <Text>Account:</Text> {account}
+            )}
+            {account && (
+                <Box >
+                  <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5} color='gray.600'>
+                    <Text>Account:</Text>
+                    <Text>{account}</Text>
+                  </Stack>
                 </Box>
               )}
+
             {userBalance && (
                 <Box>
-                <Text>Ether balance:</Text> {formatEther(userBalance)} <Text>ETH</Text>
+                  <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5}>
+                    <Text color='gray.600'>Ether balance:</Text>
+                    <Text color='gray.500'>{formatEther(userBalance)}</Text>
+                    <Text color='gray.600'>eth</Text>
+                  </Stack>
                 </Box>
-            )} */}
+            )}
+            </Stack>
+            </Box>
+            
         </Box>
     </>
   )

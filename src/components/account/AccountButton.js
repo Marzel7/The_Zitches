@@ -23,7 +23,7 @@ export const AccountButton = () => {
 
     return (
         <>
-        <Flex>{activateError}</Flex>
+        <Flex >{activateError}</Flex>
         {showModal && <AccountModal setShowModal={setShowModal} />}
         {account ? (
             <>
@@ -31,7 +31,7 @@ export const AccountButton = () => {
              <Button variant='outline' onClick={() => deactivate()}>Disconnect</Button>
             </>
         ) :  (
-            <Button mr='50px' variant='outline' onClick={activate}>Connect</Button>
+            <Button  variant='outline' onClick={activate}>Connect</Button>
         )}
         </>
     )
