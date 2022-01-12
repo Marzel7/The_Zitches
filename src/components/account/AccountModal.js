@@ -17,13 +17,13 @@ const formatBalance = (balance) => {
 export const AccountModal = (setShowModal) => {
     const { account, chainId } = useEthers()
     const balance = useEtherBalance(account)
-    if(account && chainId) {
-        return (
-            <Flex onClick={() => setShowModal(false)}>
-                <Flex onClick={(e) => e.stopPropagation()}>
-                </Flex>
-            </Flex>
-        )
-    }
+    // if(account && chainId) {
+    //     return (
+    //         <Flex onClick={() => setShowModal(false)}>
+    //             <Flex onClick={(e) => e.stopPropagation()}>
+    //             </Flex>
+    //         </Flex>
+    //     )
+    // }
 }
 

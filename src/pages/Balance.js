@@ -1,7 +1,7 @@
 import React from 'react'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { Flex, Text, Box } from '@chakra-ui/react'
+import { Stack, Text, Box } from '@chakra-ui/react'
 // import { Container, ContentBlock, ContentRow, MainContent, Section, SectionRow } from '../components/base/base'
 // import { Text } from '../typography/Text'
 // import { TextInline } from '../typography/Text'
@@ -17,21 +17,36 @@ export default function Balance() {
   const stakingBalance = useEtherBalance(STAKING_CONTRACT)
 
   return (
-    // <MainContent>
-    //   <Container>
-    //     <Section>
-    //       <SectionRow>
-    <React.Fragment>
-        <Flex>
-            <Text>Balancesq</Text>
-            <AccountButton />
-          {stakingBalance && (
+    <>
+        <Box w='720px'
+             ml='260px'>
+          <Stack
+                justify='space-between'
+                isInline
+                p={4}
+                align='baseline'
+                >
+              <Text
+                fontSize={30}
+                fontWeight='semibold'
+                ml='0px'
+                >Balance</Text>
+              <AccountButton />
+          </Stack>
+            <Box
+                justify={'center'}
+                mx='auto'
+                bg='gray.400'
+                p={10}
+                overflow='hidden'>
+            </Box>
+          {/* {stakingBalance && (
                 <Box>
                 <Text>ETH2 staking contract holds:</Text> {formatEther(stakingBalance)}{' '}
                 <Text>ETH</Text>
                 </Box>
-            )}
-            {account && (
+            )} */}
+            {/* {account && (
                 <Box>
                 <Text>Account:</Text> {account}
                 </Box>
@@ -40,11 +55,8 @@ export default function Balance() {
                 <Box>
                 <Text>Ether balance:</Text> {formatEther(userBalance)} <Text>ETH</Text>
                 </Box>
-            )}
-          </Flex>
-          </React.Fragment>
-    //     </Section>
-    //   </Container>
-    // </MainContent>
+            )} */}
+        </Box>
+    </>
   )
 }
