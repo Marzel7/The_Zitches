@@ -3,12 +3,6 @@ import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { Stack, Text, Box, Divider } from '@chakra-ui/react'
 import { ethers } from "ethers";
-// import { Container, ContentBlock, ContentRow, MainContent, Section, SectionRow } from '../components/base/base'
-// import { Text } from '../typography/Text'
-// import { TextInline } from '../typography/Text'
-// import { Title } from '../typography/Title'
-
-// import { AccountButton } from '../components/account/AccountButton'
 
 const STAKING_CONTRACT = '0x00000000219ab540356cBB839Cbe05303d7705Fa'
 
@@ -25,19 +19,16 @@ export default function Balance() {
           <Stack
                 justify='space-between'
                 isInline
-                p={3}
+                p={2.5}
                 align='baseline'
                 >
               <Text
-                fontSize={24}
+                fontSize={22}
                 fontWeight='semibold'
                 ml='0px'
                 >Balance</Text>
-              {/* <AccountButton /> */}
-          </Stack>
-            <Box
-                spacing={18}
-                >
+              </Stack>
+            <Box spacing={18}>
             <Stack spacing={2}>
 
           {stakingBalance && (
