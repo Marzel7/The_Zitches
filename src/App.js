@@ -33,7 +33,7 @@ function App() {
             <Route path='/account' element={<Balance/>}></Route>
             <Route path='/price' element={<Prices/>}></Route>
             <Route path='/block' element={<Block/>}></Route>
-            <Route path='/' element={<Block/>}></Route>
+            <Route path='/' element={<Balance/>}></Route>
         </Routes>
      </ChakraProvider>
 	);

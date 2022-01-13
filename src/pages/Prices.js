@@ -1,9 +1,6 @@
 import { Box, Stack, Text } from '@chakra-ui/react'
 import React from 'react'
 import { useCoingeckoPrice, useCoingeckoTokenPrice } from '@usedapp/coingecko'
-import { ethers } from 'ethers';
-import { formatEther } from '@ethersproject/units'
-
 
 
 export default function Prices() {
@@ -12,13 +9,11 @@ export default function Prices() {
     const wethPrice = useCoingeckoTokenPrice(WETH_CONTRACT, 'usd')
     return (
         <Box w='720px'
-            ml='350px'
-            >
-            <Stack p={2.5}
+            ml='350px'>
+            <Stack  p={2.5}
                     align='baseline'
                     fontSize={22}
-                    fontWeight='semibold'
-                    ml="0px">
+                    fontWeight='semibold'>
                 <Text>Prices</Text>
             </Stack>
             <Stack spacing={2}>

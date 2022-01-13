@@ -32,7 +32,6 @@ export default function Nav() {
                   <Link to="/account">Balance</Link>
                   <Link to="/price">Prices</Link>
                   <Link to="/block">Block</Link>
-                  <Link to="/block">Block</Link>
                   <Link to="/block">Token</Link>
                   <Link to="/block">Send Ether</Link>
                   <Link to="/block">Transactions</Link>
