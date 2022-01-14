@@ -2,21 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import {BrowserRouter as Router} from 'react-router-dom';
-import { DAppProvider, Hardhat } from "@usedapp/core";
+import { DAppProvider, Mainnet, Hardhat } from "@usedapp/core";
 
 
 const config = {
-  readOnlyChainId: Hardhat.chainId
+  readOnlyChainId: Mainnet.chainId,
+  readOnlyUrls: {
+    [Mainnet.chainId]: 'https://mainnet.infura.io/v3/3165a249c65f4198bf57200109b8fadf',
+  },
 }
 
 ReactDOM.render(
   <React.StrictMode>
+    <Router >
       <DAppProvider config={config}>
-        <Router >
-          <App />
+        <App />
+        </DAppProvider>
         </Router>
-      </DAppProvider>
     </React.StrictMode>,
   document.getElementById('root')
 );
-

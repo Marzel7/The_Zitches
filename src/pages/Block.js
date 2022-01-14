@@ -1,14 +1,13 @@
 import React from 'react'
 import { Box, Stack, Text } from '@chakra-ui/layout'
-import { useBlockMeta, useBlockNumber, useEthers } from '@usedapp/core'
+import { useBlock, useBlockMeta, useBlockNumber, useEthers, useGasPrice } from '@usedapp/core'
 
 
 export default function Block() {
 
-    const currentBlock = useBlockNumber()
-    const chainId = useEthers().chainId
-    const { timestamp, difficulty } = useBlockMeta()
-    console.log(timestamp, difficulty)
+  const blockNumber = useBlockNumber()
+  const { chainId } = useEthers()
+  const { timestamp, difficulty } = useBlockMeta()
 
     return (
         <Box
@@ -31,21 +30,25 @@ export default function Block() {
                 <Box>
                     <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5} color='gray.600'>
                         <Text>Current block:</Text>
-                        <Text color='gray.500'>{currentBlock}</Text>
+                        <Text color='gray.500'>{blockNumber}</Text>
                     </Stack>
                 </Box>
+                {difficulty && (
                 <Box>
                     <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5} color='gray.600'>
                         <Text>Current difficulty:</Text>
-                        <Text color='gray.500'>{difficulty.toString()}</Text>
+                        <Text color='gray.500'>{difficulty.toString()}{''}</Text>
                     </Stack>
                 </Box>
+                )}
+                {timestamp && (
                 <Box>
                     <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5} color='gray.600'>
                         <Text>Current block timestamp:</Text>
-                        <Text color='gray.500'>{timestamp.toLocaleString()}</Text>
+                        <Text color='gray.500'>{timestamp.toString()}{''}</Text>
                     </Stack>
                 </Box>
+                )}
             </Stack>
         </Box>
     )

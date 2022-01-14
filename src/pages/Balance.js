@@ -1,7 +1,7 @@
 import React from 'react'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { Stack, Text, Box, Divider } from '@chakra-ui/react'
+import { Stack, Text, Box } from '@chakra-ui/react'
 import { ethers } from "ethers";
 
 const STAKING_CONTRACT = '0x00000000219ab540356cBB839Cbe05303d7705Fa'
@@ -44,7 +44,7 @@ export default function Balance() {
                 <Box >
                   <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5} color='gray.600'>
                     <Text>Account:</Text>
-                    <Text>{account}</Text>
+                    <Text color='gray.500'>{account}</Text>
                   </Stack>
                 </Box>
               )}

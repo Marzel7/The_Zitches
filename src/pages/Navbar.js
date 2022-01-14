@@ -17,9 +17,6 @@ export default function Nav() {
   const { colorMode, toggleColorMode } = useColorMode();
   return (
       <>
-      {/* // <Box bg={useColorModeValue('gray.100', 'gray.900')} px={8}>
-      //   <Flex h={16} alignItems={'center'} justifyContent={'space-between'} > */}
-          {/* <Box>FX Finance</Box> */}
             <Box
                   py={2}
                   px={8}
@@ -32,13 +29,13 @@ export default function Nav() {
                   <Link to="/account">Balance</Link>
                   <Link to="/price">Prices</Link>
                   <Link to="/block">Block</Link>
-                  <Link to="/block">Token</Link>
-                  <Link to="/block">Send Ether</Link>
-                  <Link to="/block">Transactions</Link>
+                  <Link to="/token">Token</Link>
+                  <Link to="/send">Send</Link>
+                  <Link to="/transactions">Transactions</Link>
                   <Stack
                     isInline
                     align='baseline'
-                    spacing={220}>
+                    spacing={200}>
                     <AccountButton/>
                   </Stack>
                  </Stack>

@@ -9,6 +9,7 @@ import {
 } from '@usedapp/core'
 
 import { Route, Routes } from "react-router-dom";
+import { useBlockMeta, useBlockNumber } from '@usedapp/core'
 
 
 // Import ABI
@@ -23,16 +24,23 @@ import Navbar from './pages/Navbar';
 import Block from './pages/Block';
 import Prices from './pages/Prices'
 import Balance from './pages/Balance';
+import Token from './pages/Token'
+import Send from './pages/Send';
+import Transactions from './pages/Transactions';
+
 
 function App() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-	return (
+
+  return (
     <ChakraProvider>
-      <Navbar isOpen={isOpen} onClose={onClose}/>
+      <Navbar />
         <Routes>
             <Route path='/account' element={<Balance/>}></Route>
             <Route path='/price' element={<Prices/>}></Route>
             <Route path='/block' element={<Block/>}></Route>
+            <Route path='/token' element={<Token/>}></Route>
+            <Route path='/send' element={<Send/>}></Route>
+            <Route path='/transactions' element={<Transactions/>}></Route>
             <Route path='/' element={<Balance/>}></Route>
         </Routes>
      </ChakraProvider>

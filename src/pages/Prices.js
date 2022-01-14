@@ -18,13 +18,13 @@ export default function Prices() {
             </Stack>
             <Stack spacing={2}>
             <Box >
-                <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5} color='gray.600'>
+                <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.2} color='gray.600'>
                     <Text color='gray.600'>Ethereum price: $</Text>
                     <Text color='gray.500'>{etherPrice}{''}</Text>
                 </Stack>
             </Box>
             <Box >
-                <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.5} color='gray.600'>
+                <Stack isInline fontWeight='semibold' fontSize={13} spacing={0.2} color='gray.600'>
                     <Text color='gray.600'>WETH price: $</Text>
                     <Text color='gray.500'>{wethPrice}{''}</Text>
                 </Stack>
