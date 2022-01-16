@@ -1,7 +1,7 @@
 import React from 'react'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { Stack, Text, Box, Button, InputGroup, Input, InputRightElement } from '@chakra-ui/react'
+import { Stack, Text, Box, Button, InputGroup, Input, InputRightElement, InputLeftElement, useColorModeValue, Image } from '@chakra-ui/react'
 import { ethers } from "ethers";
 
 
@@ -9,6 +9,10 @@ export default function Send() {
     const { account } = useEthers()
     const balance = useEtherBalance(account)
     const show = true
+
+    const sendTransaction = async (amount) => {
+        console.log('send')
+    }
 
     return (
         <Box w="600px"
@@ -23,9 +27,9 @@ export default function Send() {
                 <Text fontSize={22}>Send</Text>
             </Stack>
             <Box>
-                <Stack spacing={210} isInline color='gray.600' fontSize={13} fontWeight='semibold'>
+                <Stack spacing={340} isInline color='gray.600' fontSize={13} fontWeight='semibold'>
                     <Text>Send transaction</Text>
-                    <Stack  isInline fontWeight='semibold' >
+                    <Stack isInline fontWeight='semibold' spacing={1}>
                         <Text justify-content='right'>Ether balance</Text>
 
                         {balance && (
@@ -34,27 +38,42 @@ export default function Send() {
                     </Stack>
                 </Stack>
             </Box>
-            <Box width={600} p={1}>
-            <InputGroup size='md'>
+            <Box width={600} p={1} >
+            <InputGroup size='md' >
                 <Input
-                    pr='4.5rem'
+                    fontSize={13}
+                    focusBorderColor='blue'
+                    width={150}
+                    pr='0.5rem'
                     type={show ? 'text' : 'password'}
-                    placeholder='Eth to:'
+                    placeholder='eth:'
+                    variant='unstyled'
                 />
-                <InputRightElement width='6.5rem'>
-                    <Button h='1.75rem' w='5rem' size='sm'
-                    px={4}
+                <Input
+                    fontSize={13}
+                    focusBorderColor='blue'
+                    pr='0.5rem'
+                    type={show ? 'text' : 'password'}
+                    placeholder='address:'
                     variant='outline'
-                    _hover={{
-                        boxShadow: 'sm',
-                        background: "gray.900",
-                        color: "gray.100",
-                    }}
-                    _active= "gray.900">
-                     Send
-                    </Button>
+                />
+                <InputRightElement width='6.5rem' >
+                    <Button h='1.75rem' w='5rem' size='sm'
+                        box-shadow =' 10 10 0 1px'
+                        _focus='none'
+                        variant='outline'
+                        _hover={{
+                            boxShadow: 'sm',
+                            background: "gray.900",
+                            color: "gray.100",
+                        }}
+                        _active= "red.300"
+                        onClick={() => sendTransaction()}>
+                    Send</Button>
                 </InputRightElement>
                 </InputGroup>
+            </Box>
+            <Box>
             </Box>
             </Box>
 
