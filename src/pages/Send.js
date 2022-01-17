@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { formatEther } from "@ethersproject/units";
-import { useEtherBalance, useEthers } from "@usedapp/core";
+import { useEtherBalance, useEthers, useSendTransaction } from "@usedapp/core";
 import {
   Stack,
   Text,
@@ -9,20 +9,48 @@ import {
   InputGroup,
   Input,
   InputRightElement,
-  InputLeftElement,
-  useColorModeValue,
-  Image,
 } from "@chakra-ui/react";
-import { ethers } from "ethers";
+import { utils, BigNumber } from "ethers";
+
+const formatter = new Intl.NumberFormat("en-us", {
+  minimumFractionDigits: 4,
+  maximumFractionDigits: 4,
+});
+
+const formatBalance = (balance) => {
+  console.log(balance);
+  return formatter.format(
+    parseFloat(formatEther(balance ?? BigNumber.from("0")))
+  );
+};
 
 export default function Send() {
   const { account } = useEthers();
   const balance = useEtherBalance(account);
-  const show = true;
 
-  const sendTransaction = async (amount) => {
-    console.log("send");
+  const [amount, setAmount] = useState("0");
+  const [disabled, setDisabled] = useState(false);
+  const [address, setAddress] = useState("");
+
+  const { sendTransaction, state } = useSendTransaction({
+    transactionName: "Send Ethereum",
+  });
+
+  const handleClick = () => {
+    setDisabled(true);
+    sendTransaction({
+      to: address,
+      value: utils.parseEther(amount),
+    });
   };
+
+  useEffect(() => {
+    if (state.status != "Mining") {
+      setDisabled(false);
+      setAmount("");
+      setAddress("");
+    }
+  }, [state]);
 
   return (
     <Box w="600px" ml="350px">
@@ -36,7 +64,7 @@ export default function Send() {
       </Stack>
       <Box>
         <Stack
-          spacing={340}
+          spacing={300}
           isInline
           color="gray.600"
           fontSize={13}
@@ -46,7 +74,7 @@ export default function Send() {
           <Stack isInline fontWeight="semibold" spacing={1}>
             <Text justify-content="right">Ether balance</Text>
 
-            {balance && <Text color="gray.500">{formatEther(balance)}</Text>}
+            {balance && <Text color="gray.500">{formatBalance(balance)}</Text>}
             <Text justify-content="right">eth</Text>
           </Stack>
         </Stack>
@@ -54,19 +82,27 @@ export default function Send() {
       <Box width={600} p={1}>
         <InputGroup size="md">
           <Input
+            // id={`EthInput`}
+            // type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.currentTarget.value)}
+            disabled={disabled}
             fontSize={13}
             focusBorderColor="blue"
             width={150}
             pr="0.5rem"
-            type={show ? "text" : "password"}
+            type={"text"}
             placeholder="eth:"
             variant="unstyled"
           />
           <Input
+            // id={`AddressInput`}
+            // type="text"
+            value={address}
+            onChange={(e) => setAddress(e.currentTarget.value)}
             fontSize={13}
             focusBorderColor="blue"
             pr="0.5rem"
-            type={show ? "text" : "password"}
             placeholder="address:"
             variant="outline"
           />
@@ -84,7 +120,7 @@ export default function Send() {
                 color: "gray.100",
               }}
               _active="red.300"
-              onClick={() => sendTransaction()}
+              onClick={() => handleClick()}
             >
               Send
             </Button>
