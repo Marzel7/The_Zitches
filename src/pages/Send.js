@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { formatEther } from "@ethersproject/units";
 import { useEtherBalance, useEthers, useSendTransaction } from "@usedapp/core";
 import {
   Stack,
@@ -10,19 +9,8 @@ import {
   Input,
   InputRightElement,
 } from "@chakra-ui/react";
-import { utils, BigNumber } from "ethers";
-
-const formatter = new Intl.NumberFormat("en-us", {
-  minimumFractionDigits: 4,
-  maximumFractionDigits: 4,
-});
-
-const formatBalance = (balance) => {
-  console.log(balance);
-  return formatter.format(
-    parseFloat(formatEther(balance ?? BigNumber.from("0")))
-  );
-};
+import { utils } from "ethers";
+import { formatBalance } from "../helpers.js";
 
 export default function Send() {
   const { account } = useEthers();
