@@ -1,16 +1,5 @@
-import {
-  Box,
-  Flex,
-  Button,
-  useColorModeValue,
-  Stack,
-  useColorMode,
-  Divider,
-} from "@chakra-ui/react";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { Box, useColorModeValue, Stack, useColorMode } from "@chakra-ui/react";
 import { AccountButton } from "../components/account/AccountButton";
-import { HStack } from "@chakra-ui/layout";
-import MenuItems from "../components/subcomponents/navbar/MenuItems";
 import { Link } from "react-router-dom";
 
 export default function Nav() {
@@ -22,7 +11,6 @@ export default function Nav() {
           <Link to="/account">Balance</Link>
           <Link to="/price">Prices</Link>
           <Link to="/block">Block</Link>
-          <Link to="/token">Token</Link>
           <Link to="/send">Send</Link>
           <Link to="/transactions">Transactions</Link>
           <Stack isInline align="baseline" spacing={200}>
