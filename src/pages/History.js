@@ -1,7 +1,18 @@
 import React, { useEffect } from "react";
-import { Box, Text, Stack, Tag } from "@chakra-ui/react";
+import {
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Tfoot,
+  Box,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { useTransactions } from "@usedapp/core";
-import { formatBalance, formatDate } from "../helpers.js";
+import { formatDate, formatBalance } from "../helpers";
 
 export default function History() {
   const { transactions } = useTransactions();
@@ -10,8 +21,36 @@ export default function History() {
     console.log("transactions", transactions);
   }, [transactions]);
 
+  const renderRow = () => {
+    return transactions.map((transaction) => {
+      return (
+        <Tr color="gray.600">
+          <Td fontSize={12} color="gray.600" key={transaction.submittedAt + 1}>
+            {formatDate(transaction.submittedAt)}
+          </Td>
+          <Td fontSize={12} key={transaction.submittedAt}>
+            ..
+            {transaction.receipt.from.substring(36)}
+          </Td>
+          <Td fontSize={12} key={transaction.submittedAt + 2}>
+            ..
+            {transaction.receipt.to.substring(36)}
+          </Td>
+          <Td
+            fontSize={12}
+            fontWeight="bold"
+            color="gray.500"
+            key={transaction.submittedAt + 3}
+          >
+            {formatBalance(transaction.transaction.value.hex)}
+          </Td>
+        </Tr>
+      );
+    });
+  };
+
   return (
-    <Box w="720px" ml="350px">
+    <Box w="600px" ml="350px">
       <Stack
         justify="space-between"
         p={2.5}
@@ -20,29 +59,18 @@ export default function History() {
       >
         <Text fontSize={22}>Transactions</Text>
       </Stack>
-      <Box p={4}>
-        {transactions.map((transaction) => {
-          return (
-            <Stack isInline spacing={5} fontSize={13}>
-              <Text key={transaction.submittedAt}>
-                {transaction.receipt.from.substring(36)}
-              </Text>
-              <Text key={transaction.submittedAt + 1}>
-                {transaction.receipt.to.substring(36)}
-              </Text>
-              <Text key={transaction.submittedAt + 2}>
-                {formatBalance(transaction.transaction.gasPrice.hex)}
-              </Text>
-              <Text key={transaction.submittedAt + 3}>
-                {formatBalance(transaction.transaction.value.hex)}
-              </Text>
-              <Text key={transaction.submittedAt + 4}>
-                {formatDate(transaction.submittedAt)}
-              </Text>
-            </Stack>
-          );
-        })}
-      </Box>
+      <Table size="sm">
+        <Thead>
+          <Tr>
+            <Th>Date</Th>
+            <Th>From</Th>
+            <Th>To</Th>
+            <Th>Eth</Th>
+          </Tr>
+        </Thead>
+        <Tbody>{renderRow()}</Tbody>
+        <Tfoot></Tfoot>
+      </Table>
     </Box>
   );
 }

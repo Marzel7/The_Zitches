@@ -2,8 +2,8 @@ import { formatEther } from "@ethersproject/units";
 import { BigNumber } from "ethers";
 
 export const formatter = new Intl.NumberFormat("en-us", {
-  minimumFractionDigits: 10,
-  maximumFractionDigits: 10,
+  minimumFractionDigits: 4,
+  maximumFractionDigits: 4,
 });
 
 export const formatBalance = (balance) => {
