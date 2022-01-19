@@ -4,22 +4,21 @@ require("@nomiclabs/hardhat-web3");
 //require("@nomiclabs/hardhat-etherscan")
 //require("dotenv").config();
 
-
 // help//
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "hardhat",
+  defaultNetwork: "localhost",
 
   paths: {
-    artifacts: './src/artifacts',
+    artifacts: "./src/artifacts",
   },
 
   networks: {
     localhost: {
-      url: "http://127.0.0.1:8545"
+      url: "http://127.0.0.1:8545",
     },
     hardhat: {
       chainId: 1337,
@@ -40,9 +39,9 @@ module.exports = {
       },
     ],
   },
-//   etherscan: {
-//     // Your API key for Etherscan
-//     // Obtain one at https://etherscan.io/
-//     apiKey: process.env.ETHERSCAN_API
-// },
+  //   etherscan: {
+  //     // Your API key for Etherscan
+  //     // Obtain one at https://etherscan.io/
+  //     apiKey: process.env.ETHERSCAN_API
+  // },
 };

@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useEtherBalance, useEthers, useSendTransaction } from "@usedapp/core";
+import {
+  useEtherBalance,
+  useEthers,
+  useSendTransaction,
+  useTransactions,
+} from "@usedapp/core";
 import {
   Stack,
   Text,
@@ -34,7 +39,7 @@ export default function Send() {
 
   useEffect(() => {
     if (state.status != "Mining") {
-      console.log("events", state.status);
+      console.log("state", state);
       setDisabled(false);
       setAmount("");
       setAddress("");

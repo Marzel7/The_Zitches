@@ -17,32 +17,30 @@ import { formatDate, formatBalance } from "../helpers";
 export default function History() {
   const { transactions } = useTransactions();
 
-  useEffect(() => {
-    console.log("transactions", transactions);
-  }, [transactions]);
+  useEffect(() => {}, [transactions]);
 
   const renderRow = () => {
-    return transactions.map((transaction) => {
+    return transactions.map((transfer) => {
       return (
         <Tr color="gray.600">
-          <Td fontSize={12} color="gray.600" key={transaction.submittedAt + 1}>
-            {formatDate(transaction.submittedAt)}
+          <Td fontSize={12} color="gray.600" key={transfer.submittedAt}>
+            {formatDate(transfer.submittedAt)}
           </Td>
-          <Td fontSize={12} key={transaction.submittedAt}>
+          <Td fontSize={12} key={transfer.submittedAt + 1}>
             ..
-            {transaction.receipt.from.substring(36)}
+            {transfer.receipt.from.substring(36)}
           </Td>
-          <Td fontSize={12} key={transaction.submittedAt + 2}>
+          <Td fontSize={12} key={transfer.submittedAt + 2}>
             ..
-            {transaction.receipt.to.substring(36)}
+            {transfer.receipt.to.substring(36)}
           </Td>
           <Td
             fontSize={12}
             fontWeight="bold"
             color="gray.500"
-            key={transaction.submittedAt + 3}
+            key={transfer.receipt.submittedAt + 3}
           >
-            {formatBalance(transaction.transaction.value.hex)}
+            {formatBalance(transfer.transaction.value)}
           </Td>
         </Tr>
       );
