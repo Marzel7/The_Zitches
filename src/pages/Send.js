@@ -39,7 +39,6 @@ export default function Send() {
 
   useEffect(() => {
     if (state.status != "Mining") {
-      console.log("state", state);
       setDisabled(false);
       setAmount("");
       setAddress("");

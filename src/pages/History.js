@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   Thead,
@@ -11,37 +11,56 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useTransactions } from "@usedapp/core";
+import { useNotifications, useTransactions } from "@usedapp/core";
 import { formatDate, formatBalance } from "../helpers";
 
 export default function History() {
-  const { transactions } = useTransactions();
+  const { transactions, addTransaction } = useTransactions();
+  const { notifications } = useNotifications();
+  const [row, setRow] = useState(false);
 
-  useEffect(() => {}, [transactions]);
+  useEffect(() => {
+    notifications.map((notification) => {
+      console.log(notification);
+      if (notification.type != "transactionSucceed") {
+        setRow(false);
+      } else {
+        setRow(true);
+      }
+    });
+  }, [notifications]);
 
   const renderRow = () => {
     return transactions.map((transfer) => {
       return (
         <Tr color="gray.600">
-          <Td fontSize={12} color="gray.600" key={transfer.submittedAt}>
-            {formatDate(transfer.submittedAt)}
-          </Td>
-          <Td fontSize={12} key={transfer.submittedAt + 1}>
-            ..
-            {transfer.receipt.from.substring(36)}
-          </Td>
-          <Td fontSize={12} key={transfer.submittedAt + 2}>
-            ..
-            {transfer.receipt.to.substring(36)}
-          </Td>
-          <Td
-            fontSize={12}
-            fontWeight="bold"
-            color="gray.500"
-            key={transfer.receipt.submittedAt + 3}
-          >
-            {formatBalance(transfer.transaction.value)}
-          </Td>
+          {transfer.submittedAt && row && (
+            <Td fontSize={12} color="gray.600" key={transfer.submittedAt}>
+              {formatDate(transfer.submittedAt)}
+            </Td>
+          )}
+          {transfer.receipt && row && (
+            <Td fontSize={12} key={transfer.submittedAt + 1}>
+              ..
+              {transfer.receipt.from.substring(36)}
+            </Td>
+          )}
+          {transfer.receipt && row && (
+            <Td fontSize={12} key={transfer.submittedAt + 2}>
+              ..
+              {transfer.receipt.to.substring(36)}
+            </Td>
+          )}
+          {transfer.transaction.value && row && (
+            <Td
+              fontSize={12}
+              fontWeight="bold"
+              color="gray.500"
+              key={transfer.submittedAt + 4}
+            >
+              {formatBalance(transfer.transaction.value)} {""}
+            </Td>
+          )}
         </Tr>
       );
     });
