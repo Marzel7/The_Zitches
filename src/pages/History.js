@@ -15,50 +15,38 @@ import { useNotifications, useTransactions } from "@usedapp/core";
 import { formatDate, formatBalance } from "../helpers";
 
 export default function History() {
-  const { transactions, addTransaction } = useTransactions();
-  const { notifications } = useNotifications();
-  const [row, setRow] = useState(false);
-
-  useEffect(() => {
-    notifications.map((notification) => {
-      console.log(notification);
-      if (notification.type != "transactionSucceed") {
-        setRow(false);
-      } else {
-        setRow(true);
-      }
-    });
-  }, [notifications]);
+  const { transactions } = useTransactions();
 
   const renderRow = () => {
-    return transactions.map((transfer) => {
+    return transactions.map((transfer, index) => {
+      console.log(transfer);
       return (
         <Tr color="gray.600">
-          {transfer.submittedAt && row && (
+          {transfer.receipt && (
             <Td fontSize={12} color="gray.600" key={transfer.submittedAt}>
               {formatDate(transfer.submittedAt)}
             </Td>
           )}
-          {transfer.receipt && row && (
+          {transfer.receipt && (
             <Td fontSize={12} key={transfer.submittedAt + 1}>
               ..
               {transfer.receipt.from.substring(36)}
             </Td>
           )}
-          {transfer.receipt && row && (
+          {transfer.receipt && (
             <Td fontSize={12} key={transfer.submittedAt + 2}>
               ..
               {transfer.receipt.to.substring(36)}
             </Td>
           )}
-          {transfer.transaction.value && row && (
+          {transfer.receipt && (
             <Td
               fontSize={12}
               fontWeight="bold"
               color="gray.500"
               key={transfer.submittedAt + 4}
             >
-              {formatBalance(transfer.transaction.value)} {""}
+              {formatBalance(transfer.transaction.value)}
             </Td>
           )}
         </Tr>
