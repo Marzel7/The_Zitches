@@ -14,44 +14,26 @@ export default function Block() {
   const { timestamp, difficulty } = useBlockMeta();
 
   return (
-    <Box w="720px" ml="350px">
-      <Stack p={2.5} align="baseline" fontSize={22} fontWeight="semibold">
+    <Box w="720px" ml="350px" textStyle="h1">
+      <Stack align="baseline" fontSize={22} fontWeight="semibold">
         <Text>Block</Text>
       </Stack>
-      <Stack spacing={2}>
-        <Box>
-          <Stack
-            isInline
-            fontWeight="semibold"
-            fontSize={13}
-            spacing={0.5}
-            color="gray.600"
-          >
+      <Stack>
+        <Box textStyle="h2">
+          <Stack isInline>
             <Text>Chain id:</Text>
             <Text color="gray.500">{chainId}</Text>
           </Stack>
         </Box>
-        <Box>
-          <Stack
-            isInline
-            fontWeight="semibold"
-            fontSize={13}
-            spacing={0.5}
-            color="gray.600"
-          >
+        <Box textStyle="h2">
+          <Stack isInline>
             <Text>Current block:</Text>
             <Text color="gray.500">{blockNumber}</Text>
           </Stack>
         </Box>
         {difficulty && (
-          <Box>
-            <Stack
-              isInline
-              fontWeight="semibold"
-              fontSize={13}
-              spacing={0.5}
-              color="gray.600"
-            >
+          <Box textStyle="h2">
+            <Stack isInline>
               <Text>Current difficulty:</Text>
               <Text color="gray.500">
                 {difficulty.toString()}
@@ -61,14 +43,8 @@ export default function Block() {
           </Box>
         )}
         {timestamp && (
-          <Box>
-            <Stack
-              isInline
-              fontWeight="semibold"
-              fontSize={13}
-              spacing={0.5}
-              color="gray.600"
-            >
+          <Box textStyle="h2">
+            <Stack isInline>
               <Text>Current block timestamp:</Text>
               <Text color="gray.500">
                 {timestamp.toString()}

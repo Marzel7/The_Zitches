@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { Button, Spinner } from "react-bootstrap";
 import { ethers } from "ethers";
 import { formatEther, formatUnits } from "@ethersproject/units";
@@ -28,13 +28,13 @@ import Navbar from "./pages/Navbar";
 import Block from "./pages/Block";
 import Prices from "./pages/Prices";
 import Balance from "./pages/Balance";
-import Token from "./pages/Token";
 import Send from "./pages/Send";
 import History from "./pages/History";
+import { Theme } from "./styles/theme";
 
 function App() {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={Theme}>
       <Navbar />
       <Routes>
         <Route path="/account" element={<Balance />}></Route>

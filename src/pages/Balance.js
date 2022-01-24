@@ -13,41 +13,27 @@ export default function Balance() {
 
   return (
     <>
-      <Box w="720px" ml="350px">
-        <Stack justify="space-between" isInline p={2.5} align="baseline">
-          <Text fontSize={22} fontWeight="semibold" ml="0px">
-            Balance
-          </Text>
+      <Box w="720px" ml="350px" textStyle="h1">
+        <Stack justify="space-between">
+          <Text>Balance</Text>
         </Stack>
-        <Box spacing={18}>
-          <Stack spacing={2}>
+        <Box>
+          <Stack>
             {stakingBalance && (
-              <Box>
-                <Stack
-                  isInline
-                  fontWeight="semibold"
-                  fontSize={13}
-                  spacing={0.5}
-                  align="baseline"
-                >
-                  <Text color="gray.600">ETH2 staking contract holds:</Text>
+              <Box textStyle="h2">
+                <Stack isInline spacing={0.5} align="baseline" spacing={1}>
+                  <Text>ETH2 staking contract holds:</Text>
                   <Text color="gray.500">
                     {ethers.utils.formatEther(stakingBalance)}
                     {""}
                   </Text>
-                  <Text color="gray.600">eth</Text>
+                  <Text>eth</Text>
                 </Stack>
               </Box>
             )}
             {account && (
-              <Box>
-                <Stack
-                  isInline
-                  fontWeight="semibold"
-                  fontSize={13}
-                  spacing={0.5}
-                  color="gray.600"
-                >
+              <Box textStyle="h2">
+                <Stack isInline>
                   <Text>Account:</Text>
                   <Text color="gray.500">{account}</Text>
                 </Stack>
@@ -55,16 +41,11 @@ export default function Balance() {
             )}
 
             {userBalance && (
-              <Box>
-                <Stack
-                  isInline
-                  fontWeight="semibold"
-                  fontSize={13}
-                  spacing={0.5}
-                >
-                  <Text color="gray.600">Ether balance:</Text>
+              <Box textStyle="h2">
+                <Stack isInline spacing={0.5}>
+                  <Text>Ether balance:</Text>
                   <Text color="gray.500">{formatBalance(userBalance)}</Text>
-                  <Text color="gray.600">eth</Text>
+                  <Text>eth</Text>
                 </Stack>
               </Box>
             )}

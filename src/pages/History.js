@@ -11,42 +11,41 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useNotifications, useTransactions } from "@usedapp/core";
+import { useTransactions } from "@usedapp/core";
 import { formatDate, formatBalance } from "../helpers";
 
 export default function History() {
   const { transactions } = useTransactions();
 
   const renderRow = () => {
-    return transactions.map((transfer, index) => {
-      console.log(transfer);
+    return transactions.map((transaction) => {
       return (
         <Tr color="gray.600">
-          {transfer.receipt && (
-            <Td fontSize={12} color="gray.600" key={transfer.submittedAt}>
-              {formatDate(transfer.submittedAt)}
+          {transaction.receipt && (
+            <Td fontSize={12} color="gray.600" key={transaction.submittedAt}>
+              {formatDate(transaction.submittedAt)}
             </Td>
           )}
-          {transfer.receipt && (
-            <Td fontSize={12} key={transfer.submittedAt + 1}>
+          {transaction.receipt && (
+            <Td fontSize={12} key={transaction.submittedAt + 1}>
               ..
-              {transfer.receipt.from.substring(36)}
+              {transaction.receipt.from.substring(36)}
             </Td>
           )}
-          {transfer.receipt && (
-            <Td fontSize={12} key={transfer.submittedAt + 2}>
+          {transaction.receipt && (
+            <Td fontSize={12} key={transaction.submittedAt + 2}>
               ..
-              {transfer.receipt.to.substring(36)}
+              {transaction.receipt.to.substring(36)}
             </Td>
           )}
-          {transfer.receipt && (
+          {transaction.receipt && (
             <Td
               fontSize={12}
               fontWeight="bold"
               color="gray.500"
-              key={transfer.submittedAt + 4}
+              key={transaction.submittedAt + 4}
             >
-              {formatBalance(transfer.transaction.value)}
+              {formatBalance(transaction.transaction.value)}
             </Td>
           )}
         </Tr>
@@ -55,13 +54,8 @@ export default function History() {
   };
 
   return (
-    <Box w="600px" ml="350px">
-      <Stack
-        justify="space-between"
-        p={2.5}
-        align="baseline"
-        fontWeight="semibold"
-      >
+    <Box w="600px" ml="350px" textStyle="h1">
+      <Stack>
         <Text fontSize={22}>Transactions</Text>
       </Stack>
       <Table size="sm">
