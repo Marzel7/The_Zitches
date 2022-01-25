@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  useEtherBalance,
-  useEthers,
-  useSendTransaction,
-  useTransactions,
-} from "@usedapp/core";
+import { useEtherBalance, useEthers, useSendTransaction } from "@usedapp/core";
 import {
   Stack,
   Text,
@@ -47,36 +42,23 @@ export default function Send() {
 
   return (
     <Box w="600px" ml="350px">
-      <Stack
-        justify="space-between"
-        p={2.5}
-        align="baseline"
-        fontWeight="semibold"
-      >
-        <Text fontSize={22}>Send</Text>
+      <Stack>
+        <Text textStyle="h1">Send</Text>
       </Stack>
-      <Box>
-        <Stack
-          spacing={300}
-          isInline
-          color="gray.600"
-          fontSize={13}
-          fontWeight="semibold"
-        >
+      <Box textStyle="h4">
+        <Stack spacing={300} isInline>
           <Text>Send transaction</Text>
-          <Stack isInline fontWeight="semibold" spacing={1}>
-            <Text justify-content="right">Ether balance</Text>
+          <Stack isInline spacing={1}>
+            <Text>Ether balance</Text>
 
-            {balance && <Text color="gray.500">{formatBalance(balance)}</Text>}
-            <Text justify-content="right">eth</Text>
+            {balance && <Text textStyle="h5">{formatBalance(balance)}</Text>}
+            <Text>eth</Text>
           </Stack>
         </Stack>
       </Box>
       <Box width={600} p={1}>
         <InputGroup size="md">
           <Input
-            // id={`EthInput`}
-            // type="number"
             value={amount}
             onChange={(e) => setAmount(e.currentTarget.value)}
             disabled={disabled}
@@ -89,8 +71,6 @@ export default function Send() {
             variant="unstyled"
           />
           <Input
-            // id={`AddressInput`}
-            // type="text"
             value={address}
             onChange={(e) => setAddress(e.currentTarget.value)}
             fontSize={13}
@@ -100,21 +80,7 @@ export default function Send() {
             variant="outline"
           />
           <InputRightElement width="6.5rem">
-            <Button
-              h="1.75rem"
-              w="5rem"
-              size="sm"
-              box-shadow=" 10 10 0 1px"
-              _focus="none"
-              variant="outline"
-              _hover={{
-                boxShadow: "sm",
-                background: "gray.900",
-                color: "gray.100",
-              }}
-              _active="red.300"
-              onClick={() => handleClick()}
-            >
+            <Button variant="outline" size="sm" onClick={() => handleClick()}>
               Send
             </Button>
           </InputRightElement>

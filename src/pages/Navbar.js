@@ -6,7 +6,7 @@ export default function Nav() {
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <>
-      <Box py={2} px={8} colorScheme="brand">
+      <Box py={2} px={8} textStyle="h4">
         <Stack isInline align="baseline" spacing={20}>
           <Link to="/account">Balance</Link>
           <Link to="/price">Prices</Link>
@@ -18,14 +18,6 @@ export default function Nav() {
           </Stack>
         </Stack>
       </Box>
-      {/* <Flex alignItems={"center"}>
-        <Stack direction={"row"} spacing={7}>
-          <Button onClick={toggleColorMode}>
-            {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-          </Button>
-          <MenuItems />
-        </Stack>
-      </Flex> */}
     </>
   );
 }

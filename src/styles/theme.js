@@ -1,6 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
 import { ButtonStyles as Button } from "./components/buttonStyles";
 import { BoxStyles as Box } from "./components/boxStyles";
+//import { TableStyles as Table } from "./components/tableStyles";
 
 export const Theme = extendTheme({
   colors: {
@@ -12,27 +13,44 @@ export const Theme = extendTheme({
   },
   textStyles: {
     h1: {
-      // you can also use responsive styles
       fontSize: "22",
       fontWeight: "semibold",
       lineHeight: "110%",
-      //letterSpacing: "-2%",
     },
     h2: {
       isInLine: "true",
-      fontSize: ["13"],
+      fontSize: ["12"],
       fontWeight: "semibold",
-      //lineHeight: "110%",
-      //spacing: "0.5",
       align: "baseline",
       color: "gray.600",
     },
     h3: {
       isInLine: "true",
-      fontSize: ["13"],
+      fontSize: ["12"],
       fontWeight: "semibold",
       align: "baseline",
       color: "gray.600",
+    },
+    h4: {
+      align: "baseline",
+      justify: "right",
+      color: "gray.600",
+      fontSize: "12.5",
+      fontWeight: "bold",
+    },
+    h5: {
+      align: "baseline",
+      justify: "right",
+      color: "gray.500",
+      fontSize: "12.5",
+      fontWeight: "bold",
+    },
+    i1: {
+      align: "baseline",
+      justify: "right",
+      color: "gray.500",
+      fontSize: "12.5",
+      fontWeight: "bold",
     },
   },
 
