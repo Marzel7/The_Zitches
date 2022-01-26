@@ -42,7 +42,7 @@ export default function Send() {
 
   return (
     <Box w="600px" ml="350px">
-      <Stack>
+      <Stack p={2}>
         <Text textStyle="h1">Send</Text>
       </Stack>
       <Box textStyle="h4">

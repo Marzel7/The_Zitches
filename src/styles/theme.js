@@ -4,6 +4,9 @@ import { BoxStyles as Box } from "./components/boxStyles";
 //import { TableStyles as Table } from "./components/tableStyles";
 
 export const Theme = extendTheme({
+  initialColorMode: "dark",
+  useSystemColorMode: false,
+
   colors: {
     primary: "#845EC2",
     secondary: "#FF6F91",

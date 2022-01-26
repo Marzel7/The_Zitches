@@ -13,7 +13,7 @@ export default function Nav() {
           <Link to="/block">Block</Link>
           <Link to="/send">Send</Link>
           <Link to="/transactions">Transactions</Link>
-          <Stack isInline align="baseline" spacing={200}>
+          <Stack isInline align="baseline" spacing={350}>
             <AccountButton />
           </Stack>
         </Stack>

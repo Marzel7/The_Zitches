@@ -14,7 +14,7 @@ export default function Balance() {
   return (
     <>
       <Box w="720px" ml="350px" textStyle="h1">
-        <Stack justify="space-between">
+        <Stack justify="space-between" p={2}>
           <Text>Balance</Text>
         </Stack>
         <Box>

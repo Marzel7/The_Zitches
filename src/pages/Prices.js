@@ -8,7 +8,7 @@ export default function Prices() {
   const wethPrice = useCoingeckoTokenPrice(WETH_CONTRACT, "usd");
   return (
     <Box w="720px" ml="350px" textStyle="h1">
-      <Stack>
+      <Stack p={2}>
         <Text>Prices</Text>
       </Stack>
       <Stack spacing={1}>

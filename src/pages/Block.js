@@ -15,7 +15,7 @@ export default function Block() {
 
   return (
     <Box w="720px" ml="350px" textStyle="h1">
-      <Stack align="baseline" fontSize={22} fontWeight="semibold">
+      <Stack align="baseline" fontSize={22} fontWeight="semibold" p={2}>
         <Text>Block</Text>
       </Stack>
       <Stack>

@@ -50,7 +50,7 @@ export default function History() {
 
   return (
     <Box w="600px" ml="350px">
-      <Stack>
+      <Stack p={2}>
         <Text textStyle="h1">Transactions</Text>
       </Stack>
       <Text textStyle="h2">
