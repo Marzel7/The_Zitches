@@ -10,7 +10,7 @@ contract Staker {
     }
 
     uint256 public threshold = 1 ether;
-    uint256 public deadline = block.timestamp + 5 minutes;
+    uint256 public deadline = block.timestamp + 5 days;
     mapping(address => uint256) public balances;
     event Stake(address staker, uint256 amount);
 

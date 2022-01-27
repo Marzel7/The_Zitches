@@ -11,14 +11,11 @@ import {
   useContractCall,
   useContractFunction,
   useNotifications,
+  blockNumberReducer,
 } from "@usedapp/core";
 
 import { Route, Routes } from "react-router-dom";
 import { useBlockMeta, useBlockNumber } from "@usedapp/core";
-
-// Import ABI
-import SimpleStorage from "./contracts/abis/SimpleStorage.json";
-import SimpleStorageAddr from "./contracts/contract-address.json";
 
 // Import CSS
 import "./App.css";

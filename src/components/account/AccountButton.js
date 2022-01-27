@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useEthers, useLookupAddress } from "@usedapp/core";
-import { Flex, Button } from "@chakra-ui/react";
-import { AccountModal } from "./AccountModal";
+import { Flex, Box, Button } from "@chakra-ui/react";
 
 export const AccountButton = () => {
   const { account, deactivate, activateBrowserWallet } = useEthers();
-  const ens = useLookupAddress();
-  const [showModal, setShowModal] = useState(false);
+  // const ens = useLookupAddress();
+  // const [showModal, setShowModal] = useState(false);
 
   const [activateError, setActivateError] = useState("");
-  const { error } = useEthers();
-  useEffect(() => {
-    if (error) {
-      setActivateError(error.message);
-    }
-  }, [error]);
+  //const { error } = useEthers();
+  // useEffect(() => {
+  //   if (error) {
+  //     setActivateError(error.message);
+  //   }
+  // }, [error]);
 
   const activate = async () => {
     setActivateError("");
@@ -22,9 +21,9 @@ export const AccountButton = () => {
   };
 
   return (
-    <>
+    <Box>
       <Flex>{activateError}</Flex>
-      {showModal && <AccountModal setShowModal={setShowModal} />}
+      {/* {showModal && <AccountModal setShowModal={setShowModal} />} */}
       {account ? (
         <>
           <Button variant="outline" size="sm" onClick={() => deactivate()}>
@@ -36,6 +35,6 @@ export const AccountButton = () => {
           Connect
         </Button>
       )}
-    </>
+    </Box>
   );
 };

@@ -20,26 +20,24 @@ export default function History() {
   const renderRow = () => {
     return transactions.map((transaction) => {
       return (
-        <Tr>
+        <Tr textStyle="h2" key={transaction.submittedAt}>
           {transaction.receipt && (
-            <Td key={transaction.submittedAt}>
-              {formatDate(transaction.submittedAt)}
-            </Td>
+            <Td>{formatDate(transaction.submittedAt)}</Td>
           )}
           {transaction.receipt && (
-            <Td key={transaction.submittedAt + 1}>
+            <Td>
               ..
               {transaction.receipt.from.substring(36)}
             </Td>
           )}
           {transaction.receipt && (
-            <Td key={transaction.submittedAt + 2}>
+            <Td>
               ..
               {transaction.receipt.to.substring(36)}
             </Td>
           )}
           {transaction.receipt && (
-            <Td color="gray.500" key={transaction.submittedAt + 4}>
+            <Td color="gray.500">
               {formatBalance(transaction.transaction.value)}
             </Td>
           )}
@@ -53,21 +51,18 @@ export default function History() {
       <Stack p={2}>
         <Text textStyle="h1">Transactions</Text>
       </Stack>
-      <Text textStyle="h2">
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Date</Th>
-              <Th>From</Th>
-              <Th>To</Th>
-              <Th>Eth</Th>
-            </Tr>
-          </Thead>
-
-          <Tbody>{renderRow()}</Tbody>
-          <Tfoot></Tfoot>
-        </Table>
-      </Text>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Date</Th>
+            <Th>From</Th>
+            <Th>To</Th>
+            <Th>Eth</Th>
+          </Tr>
+        </Thead>
+        <Tbody>{renderRow()}</Tbody>
+        <Tfoot></Tfoot>
+      </Table>
     </Box>
   );
 }

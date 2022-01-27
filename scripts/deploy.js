@@ -52,7 +52,7 @@ function saveFrontendFiles() {
     JSON.stringify(
       {
         stakerAddr: staker.address,
-        FundManagerAddr: fundManager.address,
+        fundManagerAddr: fundManager.address,
       },
       undefined,
       2
