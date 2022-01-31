@@ -12,6 +12,7 @@ let staker, fundManager;
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
+  console.log(network);
 
   console.log("Deploying contracts with the account:", deployer.address);
 

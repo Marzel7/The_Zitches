@@ -54,7 +54,7 @@ contract Staker {
     function execute() public thresholdReached deadlineExpired {}
 
     function timeLeft() public view returns (uint256) {
-        return (block.timestamp > deadline ? 0 : block.timestamp - deadline);
+        return block.timestamp > deadline ? 0 : deadline - block.timestamp;
     }
 
     receive() external payable {
