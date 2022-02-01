@@ -10,7 +10,7 @@ contract FundManager is Ownable {
         _;
     }
 
-    function complete() public notCompleted {
+    function complete() public payable notCompleted {
         completed = true;
     }
 
@@ -20,6 +20,6 @@ contract FundManager is Ownable {
 
     function withdraw(address payable _to) public {
         (bool sent, ) = _to.call{value: address(this).balance}("");
-        require(sent, "Eth trasnfer failed");
+        require(sent, "Eth transfer failed");
     }
 }
