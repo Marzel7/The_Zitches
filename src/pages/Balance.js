@@ -4,7 +4,10 @@ import {
   useContractFunction,
   useContractCall,
   useEthers,
+  useBlockNumber,
+  useGasPrice,
 } from "@usedapp/core";
+
 import {
   Stack,
   Text,
@@ -17,24 +20,22 @@ import {
 import { ethers } from "ethers";
 import { formatBalance } from "../helpers.js";
 import { Contract } from "@ethersproject/contracts";
-
+import humanizeDuration from "humanize-duration";
 // import ABI
 import StakerContract from "../contracts/abis/Staker.json";
 
 // import contract address
 import adrs from "../contracts/contract-address.json";
 
-//const STAKING_CONTRACT = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-
 const Balance = () => {
+  let staker, stakerCall, networkId;
   const { account, chainId } = useEthers();
   const userBalance = useEtherBalance(account);
   const stakingBalance = useEtherBalance(adrs.stakerAddr);
 
-  let staker, stakerCall, networkId;
   try {
     chainId === 1337 ? (networkId = chainId) : (networkId = chainId);
-    console.log("chainID", chainId);
+
     // contracts will be passed into useContractFunction
     staker = new Contract(adrs.stakerAddr, StakerContract.abi);
 
@@ -48,7 +49,7 @@ const Balance = () => {
   } catch (err) {
     console.log(err);
   }
-
+  let block = useBlockNumber();
   const timeLeft = useContractCall(stakerCall);
   const { send } = useContractFunction(staker, "stake", {});
 
@@ -56,7 +57,6 @@ const Balance = () => {
     const options = { value: ethers.utils.parseEther("1") };
     send(options);
     console.log("StakerContract.address", adrs.stakerAddr);
-    console.log("timeleft", timeLeft);
   };
 
   return (
@@ -94,6 +94,17 @@ const Balance = () => {
                   <Text>Ether balance:</Text>
                   <Text color="gray.500">{formatBalance(userBalance)}</Text>
                   <Text>eth</Text>
+                </Stack>
+              </Box>
+            )}
+            {timeLeft && (
+              <Box textStyle="h2">
+                <Stack isInline spacing={0.5}>
+                  <Text>Remaining</Text>
+                  <Text color="gray.500">
+                    {humanizeDuration(timeLeft * 1000)}
+                  </Text>
+                  <Text></Text>
                 </Stack>
               </Box>
             )}
