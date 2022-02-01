@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useEtherBalance, useContractFunction, useEthers } from "@usedapp/core";
+import {
+  useEtherBalance,
+  useContractFunction,
+  useEthers,
+  useGasPrice,
+} from "@usedapp/core";
 
 import {
   Stack,
@@ -38,12 +43,24 @@ const Balance = () => {
   }
 
   const timeLeft = useTimeLeft();
-  const { send } = useContractFunction(staker, "stake", {});
+  const gasPrice = useGasPrice();
+  const { send: stake } = useContractFunction(staker, "stake", {});
+  const { send: withdraw } = useContractFunction(staker, "withdraw", {});
+  const { send: execute } = useContractFunction(staker, "execute", {});
 
-  const handleClick = () => {
+  const handleStake = () => {
     const options = { value: ethers.utils.parseEther("1") };
     console.log(timeLeft);
-    send(options);
+    console.log(gasPrice.toNumber());
+    stake(options);
+  };
+
+  const handleWithdraw = () => {
+    withdraw(account);
+  };
+
+  const handleExecute = () => {
+    execute();
   };
 
   return (
@@ -87,7 +104,7 @@ const Balance = () => {
             {timeLeft && (
               <Box textStyle="h2">
                 <Stack isInline spacing={0.5}>
-                  <Text>Remaining</Text>
+                  <Text>Time remaining</Text>
                   <Text color="gray.500">
                     {humanizeDuration(timeLeft * 1000)}
                   </Text>
@@ -96,26 +113,62 @@ const Balance = () => {
               </Box>
             )}
           </Stack>
-          <Box p={2}>
-            <InputGroup py={2} w={200}>
-              <Input></Input>
-              <InputRightElement>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleClick()}
-                >
-                  Send
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </Box>
+          <Stack>
+            <Box py={5}>
+              <Button variant="outline" size="sm" onClick={() => handleStake()}>
+                Stake 1 ether
+              </Button>
+            </Box>
+            {userBalance && (
+              <Box textStyle="h2">
+                <Stack isInline spacing={0.5}>
+                  <Text>Your staked balance:</Text>
+                  <Text color="gray.500">{formatBalance(userBalance)}</Text>
+                  <Text>eth</Text>
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+          <Stack isInline spacing={10}>
+            <Box py={5}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleWithdraw()}
+              >
+                Withdraw
+              </Button>
+            </Box>
+            <Box py={5}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleExecute()}
+              >
+                Execute
+              </Button>
+            </Box>
+          </Stack>
         </Box>
       </Box>
       <Box w="720px" ml="10px" textStyle="h1" px={50}>
-        <Stack justify="space-between" p={50}>
-          <Text>Gas</Text>
+        <Stack justify="space-between" py={150}>
+          <Text></Text>
         </Stack>
+        <Box>
+          {gasPrice && (
+            <Box textStyle="h2">
+              <Stack isInline spacing={0.5} align="baseline" spacing={1}>
+                <Text>Current gas price:</Text>
+                <Text color="gray.500">
+                  {gasPrice.toNumber()}
+                  {""}
+                </Text>
+                <Text>gwei</Text>
+              </Stack>
+            </Box>
+          )}
+        </Box>
       </Box>
     </>
   );
