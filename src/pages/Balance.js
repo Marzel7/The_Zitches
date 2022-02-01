@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  useEtherBalance,
-  useContractFunction,
-  useContractCall,
-  useEthers,
-  useBlockNumber,
-  useGasPrice,
-} from "@usedapp/core";
+import { useEtherBalance, useContractFunction, useEthers } from "@usedapp/core";
 
 import {
   Stack,
@@ -21,6 +14,8 @@ import { ethers } from "ethers";
 import { formatBalance } from "../helpers.js";
 import { Contract } from "@ethersproject/contracts";
 import humanizeDuration from "humanize-duration";
+import { useTimeLeft } from "../hooks";
+
 // import ABI
 import StakerContract from "../contracts/abis/Staker.json";
 
@@ -28,7 +23,7 @@ import StakerContract from "../contracts/abis/Staker.json";
 import adrs from "../contracts/contract-address.json";
 
 const Balance = () => {
-  let staker, stakerCall, networkId;
+  let staker, networkId;
   const { account, chainId } = useEthers();
   const userBalance = useEtherBalance(account);
   const stakingBalance = useEtherBalance(adrs.stakerAddr);
@@ -38,25 +33,17 @@ const Balance = () => {
 
     // contracts will be passed into useContractFunction
     staker = new Contract(adrs.stakerAddr, StakerContract.abi);
-
-    // pass into useContractCall
-    stakerCall = {
-      abi: new ethers.utils.Interface(StakerContract.abi),
-      address: adrs.stakerAddr,
-      method: "timeLeft",
-      args: [],
-    };
   } catch (err) {
     console.log(err);
   }
-  let block = useBlockNumber();
-  const timeLeft = useContractCall(stakerCall);
+
+  const timeLeft = useTimeLeft();
   const { send } = useContractFunction(staker, "stake", {});
 
   const handleClick = () => {
     const options = { value: ethers.utils.parseEther("1") };
+    console.log(timeLeft);
     send(options);
-    console.log("StakerContract.address", adrs.stakerAddr);
   };
 
   return (
@@ -124,6 +111,11 @@ const Balance = () => {
             </InputGroup>
           </Box>
         </Box>
+      </Box>
+      <Box w="720px" ml="10px" textStyle="h1" px={50}>
+        <Stack justify="space-between" p={50}>
+          <Text>Gas</Text>
+        </Stack>
       </Box>
     </>
   );

@@ -1,21 +1,19 @@
 import { ethers } from "ethers";
-import { Contract } from "@ethersproject/contracts";
-import { useContractCall, useContractFunction } from "@usedapp/core";
+import { useContractCall } from "@usedapp/core";
 
 // import ABI
 import StakerContract from "../contracts/abis/Staker.json";
 // import contract address
 import adrs from "../contracts/contract-address.json";
-const x = StakerContract.abi;
-const StakerContractInterface = new ethers.utils.Interface(x);
 
 export const useTimeLeft = () => {
-  const [useTimeLeft] = useContractCall({
-    abi: StakerContractInterface,
-    address: adrs.stakerAddr,
-    method: "timeLeft",
-    args: [],
-  });
+  const timeLeft = useContractCall(stakerTimeLeftCall);
+  return timeLeft;
+};
 
-  return useTimeLeft;
+const stakerTimeLeftCall = {
+  abi: new ethers.utils.Interface(StakerContract.abi),
+  address: adrs.stakerAddr,
+  method: "timeLeft",
+  args: [],
 };
