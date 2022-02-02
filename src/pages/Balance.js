@@ -19,7 +19,7 @@ import { ethers } from "ethers";
 import { formatBalance } from "../helpers.js";
 import { Contract } from "@ethersproject/contracts";
 import humanizeDuration from "humanize-duration";
-import { useTimeLeft } from "../hooks";
+import { useTimeLeft, useBalanceCall } from "../hooks";
 
 // import ABI
 import StakerContract from "../contracts/abis/Staker.json";
@@ -44,14 +44,13 @@ const Balance = () => {
 
   const timeLeft = useTimeLeft();
   const gasPrice = useGasPrice();
+  const userStakedBalance = useBalanceCall();
   const { send: stake } = useContractFunction(staker, "stake", {});
   const { send: withdraw } = useContractFunction(staker, "withdraw", {});
   const { send: execute } = useContractFunction(staker, "execute", {});
 
   const handleStake = () => {
     const options = { value: ethers.utils.parseEther("1") };
-    console.log(timeLeft);
-    console.log(gasPrice.toNumber());
     stake(options);
   };
 
@@ -119,11 +118,14 @@ const Balance = () => {
                 Stake 1 ether
               </Button>
             </Box>
-            {userBalance && (
+            {userStakedBalance && (
               <Box textStyle="h2">
                 <Stack isInline spacing={0.5}>
                   <Text>Your staked balance:</Text>
-                  <Text color="gray.500">{formatBalance(userBalance)}</Text>
+                  <Text color="gray.500">
+                    {ethers.utils.formatEther(stakingBalance)}
+                    {""}
+                  </Text>
                   <Text>eth</Text>
                 </Stack>
               </Box>

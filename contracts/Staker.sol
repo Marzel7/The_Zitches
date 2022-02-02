@@ -10,7 +10,7 @@ contract Staker {
     }
 
     uint256 public threshold = 2 ether;
-    uint256 public deadline = block.timestamp + 3 minutes;
+    uint256 public deadline = block.timestamp + 3 hours;
     mapping(address => uint256) public balances;
     event Stake(address staker, uint256 amount);
 
@@ -57,6 +57,10 @@ contract Staker {
 
     function timeLeft() public view returns (uint256) {
         return block.timestamp > deadline ? 0 : deadline - block.timestamp;
+    }
+
+    function stakedBalance(address _account) public view returns (uint256) {
+        return balances[_account];
     }
 
     receive() external payable {
