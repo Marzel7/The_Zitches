@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
   Box,
+  Flex,
   InputGroup,
   Input,
   InputRightElement,
@@ -30,6 +31,9 @@ import adrs from "../contracts/contract-address.json";
 const Balance = () => {
   let staker, networkId;
   const { account, chainId } = useEthers();
+  const timeLeft = useTimeLeft();
+  const gasPrice = useGasPrice();
+  const userStakedBalance = useBalanceCall(account);
   const userBalance = useEtherBalance(account);
   const stakingBalance = useEtherBalance(adrs.stakerAddr);
 
@@ -42,12 +46,38 @@ const Balance = () => {
     console.log(err);
   }
 
-  const timeLeft = useTimeLeft();
-  const gasPrice = useGasPrice();
-  const userStakedBalance = useBalanceCall();
   const { send: stake } = useContractFunction(staker, "stake", {});
   const { send: withdraw } = useContractFunction(staker, "withdraw", {});
   const { send: execute } = useContractFunction(staker, "execute", {});
+
+  const [disableStakeBtn, setDisabledStakeBtn] = useState(false);
+  const [disableWithdrawBtn, setDisabledWithdrawBtn] = useState(false);
+  const [disableExecuteBtn, setDisabledExecuteBtn] = useState(true);
+
+  useEffect(() => {
+    console.log("stakingBalance", stakingBalance);
+    if (stakingBalance == 0) {
+      setDisabledStakeBtn(false);
+      setDisabledWithdrawBtn(true);
+    } else if (stakingBalance >= 5) {
+      setDisabledStakeBtn(false);
+      setDisabledWithdrawBtn(false);
+    } else if (stakingBalance > 0 && stakingBalance < 5) {
+      setDisabledStakeBtn(true);
+      setDisabledWithdrawBtn(true);
+    }
+  }, [stakingBalance]);
+
+  useEffect(() => {
+    console.log("timeLeft", timeLeft);
+    if (timeLeft > 0) {
+      setDisabledExecuteBtn(true);
+    } else {
+      setDisabledExecuteBtn(false);
+      setDisabledStakeBtn(true);
+      setDisabledWithdrawBtn(true);
+    }
+  }, [timeLeft]);
 
   const handleStake = () => {
     const options = { value: ethers.utils.parseEther("1") };
@@ -70,18 +100,6 @@ const Balance = () => {
         </Stack>
         <Box>
           <Stack>
-            {stakingBalance && (
-              <Box textStyle="h2">
-                <Stack isInline spacing={0.5} align="baseline" spacing={1}>
-                  <Text>ETH2 staking contract holds:</Text>
-                  <Text color="gray.500">
-                    {ethers.utils.formatEther(stakingBalance)}
-                    {""}
-                  </Text>
-                  <Text>eth</Text>
-                </Stack>
-              </Box>
-            )}
             {account && (
               <Box textStyle="h2">
                 <Stack isInline>
@@ -106,6 +124,7 @@ const Balance = () => {
                   <Text>Time remaining</Text>
                   <Text color="gray.500">
                     {humanizeDuration(timeLeft * 1000)}
+                    {""}
                   </Text>
                   <Text></Text>
                 </Stack>
@@ -113,15 +132,45 @@ const Balance = () => {
             )}
           </Stack>
           <Stack>
-            <Box py={5}>
-              <Button variant="outline" size="sm" onClick={() => handleStake()}>
-                Stake 1 ether
+            <Flex></Flex>
+            <Box py={3}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleStake()}
+                disabled={disableStakeBtn}
+              >
+                stake eth
               </Button>
             </Box>
             {userStakedBalance && (
               <Box textStyle="h2">
                 <Stack isInline spacing={0.5}>
                   <Text>Your staked balance:</Text>
+                  <Text color="gray.500">
+                    {formatBalance(userStakedBalance.toString())}
+                    {""}
+                  </Text>
+                  <Text>eth</Text>
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+          <Stack spacing={1}>
+            <Box py={5}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleWithdraw()}
+                disabled={disableWithdrawBtn}
+              >
+                withdraw
+              </Button>
+            </Box>
+            {stakingBalance && (
+              <Box textStyle="h2">
+                <Stack isInline spacing={0.5} align="baseline" spacing={1}>
+                  <Text>ETH2 staking contract holds:</Text>
                   <Text color="gray.500">
                     {ethers.utils.formatEther(stakingBalance)}
                     {""}
@@ -130,24 +179,15 @@ const Balance = () => {
                 </Stack>
               </Box>
             )}
-          </Stack>
-          <Stack isInline spacing={10}>
-            <Box py={5}>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleWithdraw()}
-              >
-                Withdraw
-              </Button>
-            </Box>
+
             <Box py={5}>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleExecute()}
+                disabled={disableExecuteBtn}
               >
-                Execute
+                execute
               </Button>
             </Box>
           </Stack>
