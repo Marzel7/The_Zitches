@@ -9,8 +9,8 @@ contract Staker {
         fundManager = FundManager(_fundManagerAddress);
     }
 
-    uint256 public threshold = 2 ether;
-    uint256 public deadline = block.timestamp + 3 hours;
+    uint256 public threshold = 3 ether;
+    uint256 public deadline = block.timestamp + 3 days;
     mapping(address => uint256) public balances;
     event Stake(address staker, uint256 amount);
 
@@ -51,16 +51,12 @@ contract Staker {
         require(sent, "Failed to trasnfer Eth");
     }
 
-    function execute() public thresholdReached deadlineExpired {
+    function execute() public thresholdReached {
         fundManager.complete{value: address(this).balance}();
     }
 
     function timeLeft() public view returns (uint256) {
         return block.timestamp > deadline ? 0 : deadline - block.timestamp;
-    }
-
-    function stakedBalance(address _account) public view returns (uint256) {
-        return balances[_account];
     }
 
     receive() external payable {
