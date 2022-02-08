@@ -9,8 +9,8 @@ contract Staker {
         fundManager = FundManager(_fundManagerAddress);
     }
 
-    uint256 public threshold = 3 ether;
-    uint256 public deadline = block.timestamp + 3 days;
+    uint256 public threshold = .05 ether;
+    uint256 public deadline = block.timestamp + 200 days;
     mapping(address => uint256) public balances;
     event Stake(address staker, uint256 amount);
 
