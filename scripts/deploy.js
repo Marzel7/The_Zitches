@@ -31,11 +31,11 @@ async function main() {
   //npx hardhat clean will clear `ENOENT: no such file or directory` error
   if (network.name == "rinkeby") {
     //wait for 60 seconds before verify
-    await sleep.sleep(60);
+    await sleep.sleep(90);
     await hre.run("verify:verify", {
-      StakerAddress: staker.address,
+      address: staker.address,
       FundManagerAddress: fundManager.address,
-      constructorArguments: [],
+      constructorArguments: [fundManager.address],
     });
   }
 }
