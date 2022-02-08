@@ -80,7 +80,12 @@ export default function Send() {
             variant="outline"
           />
           <InputRightElement width="6.5rem">
-            <Button variant="outline" size="sm" onClick={() => handleClick()}>
+            <Button
+              variant="outline"
+              focusBorderColor="blue"
+              size="sm"
+              onClick={() => handleClick()}
+            >
               Send
             </Button>
           </InputRightElement>

@@ -21,15 +21,7 @@ import { theme } from "./styles/theme";
 
 function App() {
   return (
-    <ChakraProvider
-      theme={theme}
-      // theme={extendTheme({
-      //   config: {
-      //     useSystemColorMode: false,
-      //     initialColorMode: "dark",
-      //   },
-      // })}
-    >
+    <ChakraProvider theme={theme}>
       <Navbar />
       <Routes>
         <Route path="/stake" element={<Stake />}></Route>

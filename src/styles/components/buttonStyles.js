@@ -4,11 +4,15 @@ export const ButtonStyles = {
   variants: {
     outline: (props) => ({
       _hover: {
-        boxShadow: "sm",
+        boxShadow: "none",
         background: "gray.900",
         color: "gray.100",
+        outline: "none",
       },
-      _active: "gray.900",
+      _focus: {
+        outline: "0px",
+        boxShadow: "none",
+      },
     }),
   },
 };

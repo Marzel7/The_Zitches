@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
 import { DAppProvider, Mainnet, Hardhat, Rinkeby } from "@usedapp/core";
+import { ColorModeScript } from "@chakra-ui/react";
 
 const config = {
   readOnlyChainId: Mainnet.chainId,
