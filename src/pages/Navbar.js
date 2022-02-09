@@ -9,10 +9,10 @@ export default function Nav() {
         <Stack isInline align="baseline" spacing={20}>
           {/* <Link to="/stake">Stake</Link>
           <Link to="/price">Prices</Link>
-          <Link to="/block">Block</Link>
-          <Link to="/send">Send</Link>
-          <Link to="/transactions">Transactions</Link> */}
-          <Stack align="baseline" px={30}>
+          <Link to="/block">Block</Link> */}
+          {/* <Link to="/send">Send</Link> */}
+          {/* <Link to="/transactions">Transactions</Link> */}
+          <Stack align="baseline" px={1200}>
             <AccountButton />
           </Stack>
         </Stack>

@@ -9,16 +9,23 @@ import {
   Input,
   InputRightElement,
 } from "@chakra-ui/react";
+import History from "./History";
+
+// import contract address
+import adrs from "../contracts/contract-address.json";
+import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { utils } from "ethers";
 import { formatBalance } from "../helpers.js";
 
 export default function Send() {
+  const etherPrice = useCoingeckoPrice("ethereum", "usd");
+
   const { account } = useEthers();
   const balance = useEtherBalance(account);
 
   const [amount, setAmount] = useState("0");
   const [disabled, setDisabled] = useState(false);
-  const [address, setAddress] = useState("");
+  const [ethValue, setEthValue] = useState("");
 
   const { sendTransaction, state } = useSendTransaction({
     transactionName: "Send Ethereum",
@@ -27,7 +34,7 @@ export default function Send() {
   const handleClick = () => {
     setDisabled(true);
     sendTransaction({
-      to: address,
+      to: adrs.tokenAddr,
       value: utils.parseEther(amount),
     });
   };
@@ -36,62 +43,77 @@ export default function Send() {
     if (state.status != "Mining") {
       setDisabled(false);
       setAmount("");
-      setAddress("");
+      //setAddress("");
     }
   }, [state]);
 
-  return (
-    <Box w="600px" ml="350px">
-      <Stack p={2}>
-        <Text textStyle="h1">Send</Text>
-      </Stack>
-      <Box textStyle="h4">
-        <Stack spacing={300} isInline>
-          <Text>Send transaction</Text>
-          <Stack isInline spacing={1}>
-            <Text>Ether balance</Text>
+  const handle = (amount) => {
+    setAmount(amount);
+    setEthValue("$" + amount * (etherPrice / 100));
+    console.log("setEthValue");
+  };
 
-            {balance && <Text textStyle="h5">{formatBalance(balance)}</Text>}
-            <Text>eth</Text>
+  return (
+    <React.Fragment>
+      <Stack>
+        <Box w="600px" ml="350px">
+          <Stack p={2}>
+            <Text textStyle="h1">Tokens</Text>
           </Stack>
-        </Stack>
-      </Box>
-      <Box width={600} p={1}>
-        <InputGroup size="md">
-          <Input
-            value={amount}
-            onChange={(e) => setAmount(e.currentTarget.value)}
-            disabled={disabled}
-            fontSize={13}
-            focusBorderColor="blue"
-            width={150}
-            pr="0.5rem"
-            type={"text"}
-            placeholder="eth:"
-            variant="unstyled"
-          />
-          <Input
-            value={address}
-            onChange={(e) => setAddress(e.currentTarget.value)}
-            fontSize={13}
-            focusBorderColor="blue"
-            pr="0.5rem"
-            placeholder="address:"
-            variant="outline"
-          />
-          <InputRightElement width="6.5rem">
-            <Button
-              variant="outline"
-              focusBorderColor="blue"
-              size="sm"
-              onClick={() => handleClick()}
-            >
-              Send
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-      </Box>
-      <Box></Box>
-    </Box>
+          <Box textStyle="h4">
+            <Stack spacing={400} isInline>
+              <Text></Text>
+              <Stack isInline spacing={1}>
+                <Text>Ether balance</Text>
+
+                {balance && (
+                  <Text textStyle="h5">{formatBalance(balance)}</Text>
+                )}
+                <Text>eth</Text>
+              </Stack>
+            </Stack>
+          </Box>
+          <Box width={600} p={1} textStyle="h5">
+            <InputGroup size="md">
+              <Input
+                value={amount}
+                onChange={(e) => handle(e.currentTarget.value)}
+                disabled={disabled}
+                fontSize={13}
+                focusBorderColor="blue"
+                width={75}
+                pr="0.5rem"
+                type={"text"}
+                placeholder="tokens:"
+                variant="unstyled"
+              />
+
+              <Input
+                value={ethValue}
+                //onChange={(e) => setAddress(e.currentTarget.value)}
+                fontSize={13}
+                focusBorderColor="blue"
+                pr="0.5rem"
+                placeholder="usd"
+                variant="outline"
+              />
+              <InputRightElement width="6.5rem">
+                <Button
+                  variant="outline"
+                  focusBorderColor="blue"
+                  size="sm"
+                  onClick={() => handleClick()}
+                >
+                  Send
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+          </Box>
+        </Box>
+      </Stack>
+      <Stack py={18}>
+        <History></History>
+      </Stack>
+    </React.Fragment>
   );
 }

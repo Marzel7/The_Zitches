@@ -8,22 +8,21 @@ const fs = require("fs");
 var sleep = require("sleep");
 const { network } = require("hardhat");
 
-let staker, fundManager;
+let token, vendor;
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
-  console.log(network);
 
   console.log("Deploying contracts with the account:", deployer.address);
 
-  const FundManager = await ethers.getContractFactory("FundManager");
-  fundManager = await FundManager.deploy();
+  const Token = await ethers.getContractFactory("Token");
+  token = await Token.deploy();
 
-  const Staker = await ethers.getContractFactory("Staker");
-  staker = await Staker.deploy(fundManager.address);
+  const Vendor = await ethers.getContractFactory("Vendor");
+  vendor = await Vendor.deploy(token.address);
 
-  console.log("Staker deployed to:", staker.address);
-  console.log("FundManager deployed to:", fundManager.address);
+  console.log("Token deployed to:", token.address);
+  console.log("Vendor deployed to:", vendor.address);
 
   saveFrontendFiles();
   // verify contracts
@@ -33,9 +32,9 @@ async function main() {
     //wait for 60 seconds before verify
     await sleep.sleep(90);
     await hre.run("verify:verify", {
-      address: staker.address,
-      FundManagerAddress: fundManager.address,
-      constructorArguments: [fundManager.address],
+      address: token.address,
+      vendorAddress: vendor.address,
+      constructorArguments: [token.address],
     });
   }
 }
@@ -52,23 +51,23 @@ function saveFrontendFiles() {
     contractsDir + "/contract-address.json",
     JSON.stringify(
       {
-        stakerAddr: staker.address,
-        fundManagerAddr: fundManager.address,
+        tokenAddr: token.address,
+        vendorAddr: vendor.address,
       },
       undefined,
       2
     )
   );
 
-  const StakerArt = artifacts.readArtifactSync("Staker");
-  const FundManagerArt = artifacts.readArtifactSync("FundManager");
+  const TokenArt = artifacts.readArtifactSync("Token");
+  const VendorArt = artifacts.readArtifactSync("Vendor");
   fs.writeFileSync(
-    contractsDir + "/abis/Staker.json",
-    JSON.stringify(StakerArt, null, 2)
+    contractsDir + "/abis/Token.json",
+    JSON.stringify(TokenArt, null, 2)
   );
   fs.writeFileSync(
-    contractsDir + "/abis/FundManager.json",
-    JSON.stringify(FundManagerArt, null, 2)
+    contractsDir + "/abis/Vendor.json",
+    JSON.stringify(VendorArt, null, 2)
   );
 }
 

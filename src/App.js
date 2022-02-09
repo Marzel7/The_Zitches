@@ -29,7 +29,7 @@ function App() {
         <Route path="/block" element={<Block />}></Route>
         <Route path="/send" element={<Send />}></Route>
         <Route path="/transactions" element={<History />}></Route>
-        <Route path="/" element={<Stake />}></Route>
+        <Route path="/" element={<Send />}></Route>
       </Routes>
     </ChakraProvider>
   );
