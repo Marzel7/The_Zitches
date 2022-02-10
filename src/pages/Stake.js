@@ -4,7 +4,6 @@ import {
   useContractFunction,
   useEthers,
   useGasPrice,
-  notifications,
   useNotifications,
 } from "@usedapp/core";
 

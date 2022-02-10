@@ -24,12 +24,12 @@ export default function History() {
           {transaction.receipt && (
             <Td>{formatDate(transaction.submittedAt)}</Td>
           )}
-          {transaction.receipt && (
+          {/* {transaction.receipt && (
             <Td>
               ..
               {transaction.receipt.from.substring(36)}
             </Td>
-          )}
+          )} */}
           {transaction.receipt && (
             <Td>
               ..
@@ -47,7 +47,7 @@ export default function History() {
   };
 
   return (
-    <Box w="600px" ml="350px">
+    <Box w="600px" ml="300px">
       <Stack p={2}>
         <Text textStyle="h1"></Text>
       </Stack>
@@ -55,9 +55,9 @@ export default function History() {
         <Thead>
           <Tr>
             <Th>Date</Th>
-            <Th>From</Th>
+            {/* <Th>From</Th> */}
             <Th>To</Th>
-            <Th>Eth</Th>
+            <Th>TKN</Th>
           </Tr>
         </Thead>
         <Tbody>{renderRow()}</Tbody>

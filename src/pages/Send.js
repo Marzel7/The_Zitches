@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useEtherBalance, useEthers, useSendTransaction } from "@usedapp/core";
+import { useEtherBalance, useEthers, useContractFunction } from "@usedapp/core";
+import { ethers } from "ethers";
+import { Contract } from "@ethersproject/contracts";
 import {
   Stack,
   Text,
@@ -8,61 +10,82 @@ import {
   InputGroup,
   Input,
   InputRightElement,
+  Spacer,
 } from "@chakra-ui/react";
 import History from "./History";
 
 // import contract address
 import adrs from "../contracts/contract-address.json";
+// import ABI
+import TokenContract from "../contracts/abis/Token.json";
+import VendorContract from "../contracts/abis/Vendor.json";
+
 import { useCoingeckoPrice } from "@usedapp/coingecko";
-import { utils } from "ethers";
 import { formatBalance } from "../helpers.js";
 
-export default function Send() {
+import { useTokenBalanceCall } from "../hooks";
+
+const Send = () => {
+  let token, vendor, networkId;
   const etherPrice = useCoingeckoPrice("ethereum", "usd");
 
-  const { account } = useEthers();
+  const { account, chainId } = useEthers();
+
+  try {
+    chainId === 1337 ? (networkId = chainId) : (networkId = chainId);
+    token = new Contract(adrs.tokenAddr, TokenContract.abi);
+    vendor = new Contract(adrs.vendorAddr, VendorContract.abi);
+    console.log("chaindId", chainId);
+  } catch (e) {
+    console.log("error reading contracts", e);
+  }
+  // Hooks
   const balance = useEtherBalance(account);
+
+  // Vendor hooks
+  const vendorTokenBalance = useTokenBalanceCall(adrs.vendorAddr);
+  const accountTokenBalance = useTokenBalanceCall(account);
 
   const [amount, setAmount] = useState("0");
   const [disabled, setDisabled] = useState(false);
   const [ethValue, setEthValue] = useState("");
 
-  const { sendTransaction, state } = useSendTransaction({
-    transactionName: "Send Ethereum",
-  });
+  const { send, state } = useContractFunction(vendor, "buyTokens", {});
 
-  const handleClick = () => {
+  const handleBuyTokens = () => {
     setDisabled(true);
-    sendTransaction({
-      to: adrs.tokenAddr,
-      value: utils.parseEther(amount),
-    });
+    send(account, amount);
   };
 
   useEffect(() => {
     if (state.status != "Mining") {
       setDisabled(false);
       setAmount("");
-      //setAddress("");
+      setEthValue("");
     }
   }, [state]);
 
   const handle = (amount) => {
     setAmount(amount);
-    setEthValue("$" + amount * (etherPrice / 100));
+    setEthValue("$" + amount * etherPrice);
     console.log("setEthValue");
   };
 
   return (
-    <React.Fragment>
+    <>
       <Stack>
-        <Box w="600px" ml="350px">
+        <Box w="600px" ml="300px">
           <Stack p={2}>
-            <Text textStyle="h1">Tokens</Text>
+            <Text textStyle="h1"></Text>
           </Stack>
           <Box textStyle="h4">
-            <Stack spacing={400} isInline>
-              <Text></Text>
+            <Stack>
+              <Stack isInline spacing={1}>
+                <Text>TKN Balance</Text>
+                {balance && (
+                  <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
+                )}
+              </Stack>
               <Stack isInline spacing={1}>
                 <Text>Ether balance</Text>
 
@@ -70,50 +93,62 @@ export default function Send() {
                   <Text textStyle="h5">{formatBalance(balance)}</Text>
                 )}
                 <Text>eth</Text>
+                <Spacer></Spacer>
+                <Text>Vendor TKN balance</Text>
+
+                {balance && account && (
+                  <Text textStyle="h5">{vendorTokenBalance.toString()}</Text>
+                )}
+                <Text></Text>
               </Stack>
             </Stack>
           </Box>
-          <Box width={600} p={1} textStyle="h5">
-            <InputGroup size="md">
-              <Input
-                value={amount}
-                onChange={(e) => handle(e.currentTarget.value)}
-                disabled={disabled}
-                fontSize={13}
-                focusBorderColor="blue"
-                width={75}
-                pr="0.5rem"
-                type={"text"}
-                placeholder="tokens:"
-                variant="unstyled"
-              />
-
-              <Input
-                value={ethValue}
-                //onChange={(e) => setAddress(e.currentTarget.value)}
-                fontSize={13}
-                focusBorderColor="blue"
-                pr="0.5rem"
-                placeholder="usd"
-                variant="outline"
-              />
-              <InputRightElement width="6.5rem">
-                <Button
-                  variant="outline"
+          <Stack py={7} px={300}>
+            <Box width={250} px={1} textStyle="h5">
+              <InputGroup size="md">
+                <Input
+                  value={amount}
+                  onChange={(e) => handle(e.currentTarget.value)}
+                  disabled={disabled}
+                  fontSize={13}
                   focusBorderColor="blue"
-                  size="sm"
-                  onClick={() => handleClick()}
-                >
-                  Send
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </Box>
+                  width={75}
+                  pr="0.5rem"
+                  type={"text"}
+                  placeholder="tokens:"
+                  variant="unstyled"
+                />
+
+                <Input
+                  value={ethValue}
+                  onChange={(e) => setEthValue(e.currentTarget.value)}
+                  fontSize={13}
+                  focusBorderColor="blue"
+                  pr="0.5rem"
+                  placeholder="usd"
+                  variant="outline"
+                />
+                <InputRightElement width="6.5rem">
+                  <Button
+                    variant="outline"
+                    focusBorderColor="blue"
+                    size="sm"
+                    onClick={(e) => handleBuyTokens(amount)}
+                    variant="outline"
+                  >
+                    Buy
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </Box>
+          </Stack>
         </Box>
+
+        <Stack py={19}>
+          <History></History>
+        </Stack>
       </Stack>
-      <Stack py={18}>
-        <History></History>
-      </Stack>
-    </React.Fragment>
+    </>
   );
-}
+};
+export default Send;
