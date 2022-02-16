@@ -35,7 +35,6 @@ const Send = () => {
     chainId === 1337 ? (networkId = chainId) : (networkId = chainId);
     token = new Contract(adrs.tokenAddr, TokenContract.abi);
     vendor = new Contract(adrs.vendorAddr, VendorContract.abi);
-    console.log("chaindId", chainId);
   } catch (e) {
     console.log("error reading contracts", e);
   }
@@ -50,7 +49,7 @@ const Send = () => {
   const [disabled, setDisabled] = useState(false);
   const [ethValue, setEthValue] = useState("");
 
-  const { send, state } = useContractFunction(vendor, "buyTokens", {});
+  const { send, state, events } = useContractFunction(vendor, "buyTokens", {});
 
   const handleBuyTokens = () => {
     setDisabled(true);
@@ -68,7 +67,6 @@ const Send = () => {
   const handle = (amount) => {
     setAmount(amount);
     setEthValue("$" + amount * etherPrice);
-    console.log("setEthValue");
   };
 
   return (
@@ -82,7 +80,7 @@ const Send = () => {
             <Stack>
               <Stack isInline spacing={1}>
                 <Text>TKN Balance</Text>
-                {balance && (
+                {accountTokenBalance && (
                   <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
                 )}
               </Stack>
@@ -96,7 +94,7 @@ const Send = () => {
                 <Spacer></Spacer>
                 <Text>Vendor TKN balance</Text>
 
-                {balance && account && (
+                {vendorTokenBalance && (
                   <Text textStyle="h5">{vendorTokenBalance.toString()}</Text>
                 )}
                 <Text></Text>
@@ -136,7 +134,7 @@ const Send = () => {
                     onClick={(e) => handleBuyTokens(amount)}
                     variant="outline"
                   >
-                    Buy
+                    Confirm
                   </Button>
                 </InputRightElement>
               </InputGroup>
@@ -145,7 +143,7 @@ const Send = () => {
         </Box>
 
         <Stack py={19}>
-          <History></History>
+          <History state={state}></History>
         </Stack>
       </Stack>
     </>

@@ -4,8 +4,22 @@ import { useContractCall } from "@usedapp/core";
 // import ABI
 import StakerContract from "../contracts/abis/Staker.json";
 import FundManagerContract from "../contracts/abis/FundManager.json";
+import TokenContract from "../contracts/abis/Token.json";
+import VendorContract from "../contracts/abis/Vendor.json";
 // import contract address
 import adrs from "../contracts/contract-address.json";
+
+export const useTokenBalanceCall = (address) => {
+  const tokenBalance = useContractCall(
+    address && {
+      abi: new ethers.utils.Interface(TokenContract.abi),
+      address: adrs.tokenAddr,
+      method: "balanceOf",
+      args: [address],
+    }
+  );
+  return tokenBalance;
+};
 
 export const useTimeLeftCall = () => {
   const timeLeft = useContractCall({
@@ -26,6 +40,7 @@ export const useBalanceCall = (ownerAddress) => {
       args: [ownerAddress],
     }
   );
+
   return userStakedBalance;
 };
 
@@ -36,6 +51,7 @@ export const useThresholdCall = () => {
     method: "threshold",
     args: [],
   });
+  console.log(threshold);
   return threshold;
 };
 

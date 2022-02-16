@@ -5,12 +5,14 @@ import "./Token.sol";
 
 contract Vendor {
     Token public token;
+    event BuyTokens(address sender, uint256 amount);
 
     constructor(address _tokenAddress) {
         token = Token(_tokenAddress);
     }
 
-    function buyTokens(uint256 _amount) public {
-        token.transfer(msg.sender, _amount);
+    function buyTokens(address _sender, uint256 _amount) public {
+        token.transfer(_sender, _amount);
+        emit BuyTokens(_sender, _amount);
     }
 }

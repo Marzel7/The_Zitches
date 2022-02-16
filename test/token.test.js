@@ -43,7 +43,9 @@ describe("Simple Token Example", function () {
         expect(await token.balanceOf(vendor.address)).to.equal(1000);
 
         console.log("\t", " 🔨 Transferring...");
-        const buyTokensResult = await vendor.connect(deployer).buyTokens(100);
+        const buyTokensResult = await vendor
+          .connect(deployer)
+          .buyTokens(100, token.address);
         console.log("\t", " 🏷  mint tx: ", buyTokensResult.hash);
 
         console.log("\t", " ⏳ Waiting for confirmation...");

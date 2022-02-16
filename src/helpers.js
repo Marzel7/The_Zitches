@@ -2,14 +2,18 @@ import { formatEther } from "@ethersproject/units";
 import { BigNumber } from "ethers";
 
 export const formatter = new Intl.NumberFormat("en-us", {
-  minimumFractionDigits: 4,
-  maximumFractionDigits: 4,
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
 });
 
 export const formatBalance = (balance) => {
   return formatter.format(
     parseFloat(formatEther(balance ?? BigNumber.from("0")))
   );
+};
+
+export const formatUSD = (balance) => {
+  return formatter.format(parseFloat(balance) ?? BigNumber.from("0"));
 };
 
 export const dateFormatter = (timestamp) => {
@@ -19,6 +23,8 @@ export const dateFormatter = (timestamp) => {
 
 export const formatDate = (timestamp) => {
   var date = new Date(timestamp);
+  let minutes = date.getMinutes();
+  minutes = minutes <= 9 ? "0" + minutes : minutes;
   return (
     date.getDate() +
     "/" +
@@ -28,8 +34,11 @@ export const formatDate = (timestamp) => {
     " " +
     date.getHours() +
     ":" +
-    date.getMinutes() +
-    ":" +
-    date.getSeconds()
+    minutes
+  ).padStart(
+    2,
+    "0" // +
+    // ":" +
+    //date.getSeconds()
   );
 };
