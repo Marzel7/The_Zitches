@@ -25,7 +25,6 @@ import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { formatBalance } from "../helpers.js";
 
 import { useTokenBalanceCall } from "../hooks";
-import search from "../components/subcomponents/Search";
 
 const Send = () => {
   let token, vendor, networkId;
@@ -132,6 +131,7 @@ const Send = () => {
                   <Button
                     variant="outline"
                     focusBorderColor="blue"
+                    fontSize={12}
                     size="sm"
                     onClick={(e) => handleBuyTokens(amount)}
                     variant="outline"

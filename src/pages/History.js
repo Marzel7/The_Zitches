@@ -15,32 +15,6 @@ import {
 import { useNotifications } from "@usedapp/core";
 import { formatDate } from "../helpers";
 
-const renderEmpty = () => {
-  console.log("empty");
-
-  for (let i = 0; i < 3; i++) {
-    return (
-      <>
-        <Tr>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-        </Tr>
-        <Tr>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-        </Tr>
-        <Tr>
-          <Td></Td>
-          <Td></Td>
-          <Td></Td>
-        </Tr>
-      </>
-    );
-  }
-};
-
 export default function History() {
   const { notifications } = useNotifications();
   const [notificationHistory, setNotificationHistory] = useState([]);
@@ -83,7 +57,7 @@ export default function History() {
             {transaction.transaction && (
               <Td>
                 ..
-                {transaction.transaction.to.substring(36)}
+                {transaction.transaction.from.substring(36)}
               </Td>
             )}
             {transaction.transaction ? (
@@ -108,8 +82,8 @@ export default function History() {
         <Thead>
           <Tr>
             <Th>Date</Th>
-            {/* <Th>From</Th> */}
-            <Th>To</Th>
+            <Th>From</Th>
+            {/* <Th>To</Th> */}
             <Th>TKN</Th>
           </Tr>
         </Thead>

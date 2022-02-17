@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Text,
@@ -8,35 +8,48 @@ import {
   Input,
   InputRightElement,
 } from "@chakra-ui/react";
+import { useEtherBalance, useEthers, useContractFunction } from "@usedapp/core";
+import { useTokenBalanceCall } from "../../hooks";
 
-export default function search() {
+// import contract address
+import adrs from "../../contracts/contract-address.json";
+// import ABI
+import TokenContract from "../../contracts/abis/Token.json";
+
+export default function Search() {
+  const { account } = useEthers();
+  const [ethAddress, setEthAddress] = useState("");
+  const accountTokenBalance = useTokenBalanceCall(ethAddress);
+
+  const handleEthAddress = (address) => {
+    setEthAddress(address);
+  };
+
+  const handleSearchBtn = (address) => {
+    setEthAddress("");
+  };
+
   return (
     <>
-      <Box w="600px" ml="300px" py={10}>
-        <Text textStyle="h4">TKN Balance</Text>
+      <Box w="600px" ml="300px" py={10} isInline>
+        <Stack isInline spacing={1}>
+          <Text textStyle="h4">TKN Balance</Text>
+          {accountTokenBalance && (
+            <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
+          )}
+        </Stack>
         <Stack>
-          <Box width={250} px={1} textStyle="h5">
+          <Box width={420} px={1} py={1} textStyle="h5">
             <InputGroup size="md">
-              {/* <Input
-              //value={amount}
-              //onChange={(e) => handle(e.currentTarget.value)}
-              //disabled={disabled}
-              fontSize={13}
-              focusBorderColor="blue"
-              width={75}
-              pr="0.5rem"
-              type={"text"}
-              placeholder="tokens:"
-              variant="unstyled"
-            /> */}
-
               <Input
-                // value={ethValue}
-                //onChange={(e) => setEthValue(e.currentTarget.value)}
-                fontSize={13}
+                value={ethAddress}
+                onChange={(e) => handleEthAddress(e.currentTarget.value)}
+                fontSize={12}
                 focusBorderColor="blue"
+                type={"text"}
+                spellcheck="false"
                 pr="0.5rem"
-                placeholder="address"
+                placeholder="0x.."
                 variant="outline"
               />
               <InputRightElement width="6.5rem">
@@ -44,10 +57,11 @@ export default function search() {
                   variant="outline"
                   focusBorderColor="blue"
                   size="sm"
-                  //onClick={(e) => handleBuyTokens(amount)}
+                  fontSize={12}
+                  onClick={(e) => handleSearchBtn(ethAddress)}
                   variant="outline"
                 >
-                  Search
+                  Clear
                 </Button>
               </InputRightElement>
             </InputGroup>
