@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useEtherBalance, useEthers, useContractFunction } from "@usedapp/core";
-import { ethers } from "ethers";
+
 import { Contract } from "@ethersproject/contracts";
 import {
   Stack,
@@ -13,6 +13,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import History from "./History";
+import Search from "../components/subcomponents/Search";
 
 // import contract address
 import adrs from "../contracts/contract-address.json";
@@ -24,6 +25,7 @@ import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { formatBalance } from "../helpers.js";
 
 import { useTokenBalanceCall } from "../hooks";
+import search from "../components/subcomponents/Search";
 
 const Send = () => {
   let token, vendor, networkId;
@@ -49,7 +51,7 @@ const Send = () => {
   const [disabled, setDisabled] = useState(false);
   const [ethValue, setEthValue] = useState("");
 
-  const { send, state, events } = useContractFunction(vendor, "buyTokens", {});
+  const { send, state } = useContractFunction(vendor, "buyTokens", {});
 
   const handleBuyTokens = () => {
     setDisabled(true);
@@ -73,7 +75,7 @@ const Send = () => {
     <>
       <Stack>
         <Box w="600px" ml="300px">
-          <Stack p={2}>
+          <Stack>
             <Text textStyle="h1"></Text>
           </Stack>
           <Box textStyle="h4">
@@ -110,10 +112,10 @@ const Send = () => {
                   disabled={disabled}
                   fontSize={13}
                   focusBorderColor="blue"
-                  width={75}
+                  width={105}
                   pr="0.5rem"
                   type={"text"}
-                  placeholder="tokens:"
+                  placeholder="buy tokens"
                   variant="unstyled"
                 />
 
@@ -142,10 +144,11 @@ const Send = () => {
           </Stack>
         </Box>
 
-        <Stack py={19}>
-          <History state={state}></History>
+        <Stack>
+          <History></History>
         </Stack>
       </Stack>
+      <Search></Search>
     </>
   );
 };

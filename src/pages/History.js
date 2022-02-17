@@ -12,36 +12,86 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { useTransactions } from "@usedapp/core";
-import { formatDate, formatBalance } from "../helpers";
+import { useNotifications } from "@usedapp/core";
+import { formatDate } from "../helpers";
 
-export default function History(props) {
-  const { transactions } = useTransactions();
+const renderEmpty = () => {
+  console.log("empty");
 
+  for (let i = 0; i < 3; i++) {
+    return (
+      <>
+        <Tr>
+          <Td></Td>
+          <Td></Td>
+          <Td></Td>
+        </Tr>
+        <Tr>
+          <Td></Td>
+          <Td></Td>
+          <Td></Td>
+        </Tr>
+        <Tr>
+          <Td></Td>
+          <Td></Td>
+          <Td></Td>
+        </Tr>
+      </>
+    );
+  }
+};
+
+export default function History() {
+  const { notifications } = useNotifications();
+  const [notificationHistory, setNotificationHistory] = useState([]);
   const [rowNum, setRowNum] = useState("3");
 
-  useEffect(() => {}, [props]);
+  useEffect(() => {
+    // setNotificationHistory(notifications);
+    notifications.map((notification) => {
+      if (notification.type === "transactionSucceed") {
+        {
+          setNotificationHistory(() => [notification, ...notificationHistory]);
+        }
+        setNotificationHistory((notificationHistory) =>
+          notificationHistory.filter(
+            (v, i, a) =>
+              a.findIndex((t) =>
+                ["submittedAt"].every((k) => t[k] === v[k])
+              ) === i
+          )
+        );
+        console.log(
+          "notificationHistory",
+          parseInt(notification.receipt.logs[0].data.toString(), 16),
+          "length",
+          notificationHistory.length
+        );
+      }
+    });
+  }, [notifications]);
 
   const renderRow = () => {
-    return transactions.map((transaction, index) => {
-      console.log("date", formatDate(transaction.submittedAt));
+    console.log("render", notificationHistory);
+    return notificationHistory.map((transaction, index) => {
       if (index <= rowNum) {
         return (
           <Tr key={index} textStyle="h5">
-            {transaction.submittedAt && (
+            {transaction.transaction && (
               <Td>{formatDate(transaction.submittedAt)}</Td>
             )}
-
-            {transaction.transaction.to && (
+            {transaction.transaction && (
               <Td>
                 ..
                 {transaction.transaction.to.substring(36)}
               </Td>
             )}
-            {transaction.transaction.value && (
+            {transaction.transaction ? (
               <Td color="gray.500">
-                {formatBalance(transaction.transaction.value)}
+                {parseInt(transaction.receipt.logs[0].data.toString(), 16)}
               </Td>
+            ) : (
+              <Td>d</Td>
             )}
           </Tr>
         );
@@ -50,7 +100,7 @@ export default function History(props) {
   };
 
   return (
-    <Box w="600px" ml="300px">
+    <Box w="600px" h="275" ml="300px">
       <Stack p={2}>
         <Text textStyle="h3"></Text>
       </Stack>
