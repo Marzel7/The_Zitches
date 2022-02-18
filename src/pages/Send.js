@@ -111,11 +111,12 @@ const Send = () => {
                   disabled={disabled}
                   fontSize={13}
                   focusBorderColor="blue"
-                  width={105}
+                  width={35}
                   pr="0.5rem"
                   type={"text"}
-                  placeholder="buy tokens"
+                  placeholder="Eth"
                   variant="unstyled"
+                  text-align="right"
                 />
 
                 <Input

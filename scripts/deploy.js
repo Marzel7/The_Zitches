@@ -28,6 +28,9 @@ async function main() {
   const balance = await token.balanceOf(vendor.address);
   console.log("vendor token balance - ", balance);
 
+  const owner = await vendor.owner();
+  console.log("owner of vendor contract - ", owner);
+
   saveFrontendFiles();
   // verify contracts
 

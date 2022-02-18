@@ -46,7 +46,6 @@ export default function History() {
   }, [notifications]);
 
   const renderRow = () => {
-    console.log("render", notificationHistory);
     return notificationHistory.map((transaction, index) => {
       if (index <= rowNum) {
         return (
