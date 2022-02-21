@@ -39,6 +39,7 @@ const Send = () => {
   } catch (e) {
     console.log("error reading contracts", e);
   }
+
   // Hooks
   const balance = useEtherBalance(account);
 
@@ -53,10 +54,10 @@ const Send = () => {
   const { send, state } = useContractFunction(vendor, "buyTokens", {});
 
   const handleBuyTokens = () => {
+    console.log("buy");
     setDisabled(true);
-    send(account, amount);
+    send(1);
   };
-
   useEffect(() => {
     if (state.status != "Mining") {
       setDisabled(false);
@@ -82,7 +83,9 @@ const Send = () => {
               <Stack isInline spacing={1}>
                 <Text>TKN Balance</Text>
                 {accountTokenBalance && (
-                  <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
+                  <Text textStyle="h5">
+                    {formatBalance(accountTokenBalance.toString())}
+                  </Text>
                 )}
               </Stack>
               <Stack isInline spacing={1}>

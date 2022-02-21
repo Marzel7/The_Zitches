@@ -14,17 +14,20 @@ contract Vendor is Ownable {
         token = Token(_tokenAddress);
     }
 
-    function buyTokens(address _sender) public payable {
+    function buyTokens() public payable {
         require(msg.value != 0, "Insufficient Eth for transfer");
-        uint256 amountOfTokens = msg.value * tokensPerEth;
-        // console.log("token amount", amountOfTokens);
-        token.transfer(_sender, amountOfTokens);
-        emit BuyTokens(_sender, msg.value, amountOfTokens);
+        uint256 amountOfTokens = (msg.value / 1000000000000000000) *
+            tokensPerEth;
+        token.transfer(msg.sender, amountOfTokens);
+        emit BuyTokens(msg.sender, msg.value, 10);
     }
 
     function balance() public view returns (uint256) {
         return address(this).balance;
     }
 
-    function withdraw() public onlyOwner {}
+    function withdraw() public onlyOwner {
+        uint256 totalBalance = address(this).balance;
+        payable(msg.sender).transfer(totalBalance);
+    }
 }

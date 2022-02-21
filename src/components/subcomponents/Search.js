@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useEtherBalance, useEthers, useContractFunction } from "@usedapp/core";
 import { useTokenBalanceCall } from "../../hooks";
+import { formatBalance } from "../../helpers.js";
 
 // import contract address
 import adrs from "../../contracts/contract-address.json";
@@ -31,11 +32,13 @@ export default function Search() {
 
   return (
     <>
-      <Box w="600px" ml="300px" py={10} isInline>
+      <Box w="600px" ml="300px" py={10}>
         <Stack isInline spacing={1}>
           <Text textStyle="h4">TKN Balance</Text>
           {accountTokenBalance && (
-            <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
+            <Text textStyle="h5">
+              {formatBalance(accountTokenBalance.toString())}
+            </Text>
           )}
         </Stack>
         <Stack>
@@ -47,7 +50,7 @@ export default function Search() {
                 fontSize={12}
                 focusBorderColor="blue"
                 type={"text"}
-                spellcheck="false"
+                spellCheck="false"
                 pr="0.5rem"
                 placeholder="0x.."
                 variant="outline"
