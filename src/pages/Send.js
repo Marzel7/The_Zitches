@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import History from "./History";
 import Search from "../components/subcomponents/Search";
+import Withdraw from "../components/subcomponents/Withdraw";
 
 // import contract address
 import adrs from "../contracts/contract-address.json";
@@ -25,6 +26,7 @@ import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { formatBalance } from "../helpers.js";
 
 import { useTokenBalanceCall } from "../hooks";
+import { parseEther } from "ethers/lib/utils";
 
 const Send = () => {
   let token, vendor, networkId;
@@ -51,12 +53,13 @@ const Send = () => {
   const [disabled, setDisabled] = useState(false);
   const [ethValue, setEthValue] = useState("");
 
-  const { send, state } = useContractFunction(vendor, "buyTokens", {});
+  const { send, state } = useContractFunction(vendor, "buyTokens", {
+    transactionName: "buyTokens",
+  });
 
-  const handleBuyTokens = () => {
-    console.log("buy");
+  const handleBuyTokens = (amount) => {
     setDisabled(true);
-    send(1);
+    send({ value: parseEther(amount.toString()) });
   };
   useEffect(() => {
     if (state.status != "Mining") {
@@ -83,9 +86,7 @@ const Send = () => {
               <Stack isInline spacing={1}>
                 <Text>TKN Balance</Text>
                 {accountTokenBalance && (
-                  <Text textStyle="h5">
-                    {formatBalance(accountTokenBalance.toString())}
-                  </Text>
+                  <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
                 )}
               </Stack>
               <Stack isInline spacing={1}>
@@ -153,6 +154,7 @@ const Send = () => {
         </Stack>
       </Stack>
       <Search></Search>
+      <Withdraw></Withdraw>
     </>
   );
 };

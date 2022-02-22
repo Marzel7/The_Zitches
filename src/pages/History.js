@@ -23,7 +23,11 @@ export default function History() {
   useEffect(() => {
     // setNotificationHistory(notifications);
     notifications.map((notification) => {
-      if (notification.type === "transactionSucceed") {
+      if (
+        notification.type === "transactionSucceed" &&
+        notification.transactionName == "buyTokens"
+      ) {
+        console.log(notification.transactionName);
         {
           setNotificationHistory(() => [notification, ...notificationHistory]);
         }

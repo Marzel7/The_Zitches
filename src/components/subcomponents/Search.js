@@ -36,9 +36,7 @@ export default function Search() {
         <Stack isInline spacing={1}>
           <Text textStyle="h4">TKN Balance</Text>
           {accountTokenBalance && (
-            <Text textStyle="h5">
-              {formatBalance(accountTokenBalance.toString())}
-            </Text>
+            <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
           )}
         </Stack>
         <Stack>

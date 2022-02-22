@@ -7,6 +7,7 @@ const { solidity } = require("ethereum-waffle");
 const { parseEther, parseUnits, formatEther } = require("ethers/lib/utils");
 
 use(solidity);
+// use hardhat config
 
 describe("Simple Token Example", function () {
   this.timeout(120000);
@@ -44,7 +45,7 @@ describe("Simple Token Example", function () {
       });
     }
 
-    describe("buyTokens", function () {
+    describe("BuyTokens", function () {
       it("Should allow vendor to sell tokens", async function () {
         // vendor has initial token supply
         let startingBalance = await token.balanceOf(vendor.address);
@@ -72,7 +73,7 @@ describe("Simple Token Example", function () {
         );
         let balance = await prov.getBalance(vendor.address);
         // ); // 1 * 10  = 10 tokens
-        balance = totalSupply - ethAmount * tokensPerEth; // 9999 tokens
+        balance = totalSupply - ethAmount * tokensPerEth; // 9990 tokens
 
         expect(await token.balanceOf(vendor.address)).to.equal(
           balance.toString()
@@ -80,12 +81,12 @@ describe("Simple Token Example", function () {
       });
     });
 
-    describe("ownership", function () {
-      it("Should determine deployership", async function () {
+    describe("Ownership", function () {
+      it("Should determine owner", async function () {
         expect(await vendor.owner()).to.equal(deployer.address);
       });
 
-      it("transfer ownership", async function () {
+      it("Transfer ownership", async function () {
         await vendor.transferOwnership(owner.address);
         expect(await vendor.owner()).to.equal(owner.address);
         await expect(vendor.withdraw()).to.be.revertedWith(
@@ -94,8 +95,8 @@ describe("Simple Token Example", function () {
       });
     });
 
-    describe("withdrawal", async function () {
-      it("withdraws eth from contract", async function () {
+    describe("Withdrawal", async function () {
+      it("Withdraws eth from contract", async function () {
         // 1 eth in contract balance
         expect(await vendor.balance()).to.equal(parseEther("1"));
         // inital 10,000 account balance
@@ -115,6 +116,56 @@ describe("Simple Token Example", function () {
           balanceAfterWithdrawal.toString()
         );
       });
+    });
+  });
+
+  describe("Verify balances", function () {
+    it("Checks vendor balance", async () => {
+      expect(await token.balanceOf(vendor.address)).to.be.equal(
+        totalSupply - ethAmount * tokensPerEth
+      );
+      expect(await token.balanceOf(deployer.address)).to.be.equal(
+        ethAmount * tokensPerEth
+      );
+      startingBalance = await token.balanceOf(deployer.address);
+
+      const buyTokensResult = await vendor.connect(deployer).buyTokens({
+        value: parseEther("1"),
+      });
+      const newBalance = startingBalance.toNumber() + ethAmount * tokensPerEth;
+
+      expect(await token.balanceOf(deployer.address)).to.equal(newBalance);
+      console.log("\t", " 🏷  mint tx: ", buyTokensResult.hash);
+      console.log("\t", " ⏳ Waiting for confirmation...");
+      const txResult = await buyTokensResult.wait(0);
+      startingBalance = await token.balanceOf(deployer.address);
+      console.log(
+        "\t",
+        " 🔎 Checking new buyer balance: ",
+        startingBalance.toString()
+      );
+      const vendorBalance = await token.balanceOf(vendor.address);
+      console.log(
+        "\t",
+        " 🔎 Checking new vendor balance: ",
+        vendorBalance.toString()
+      );
+    });
+    it("Cannot exceed vendor token supply", async () => {
+      vendorBalance = await token.balanceOf(vendor.address);
+      const buyTokensResult = await vendor.connect(deployer).buyTokens({
+        value: parseEther("98"),
+      });
+      vendorBalance = await token.balanceOf(vendor.address);
+      console.log(
+        "\t",
+        " 🔎 Checking new vendor balance: ",
+        vendorBalance.toString()
+      );
+
+      await expect(
+        vendor.connect(deployer).buyTokens({ value: parseEther("100") })
+      ).to.be.revertedWith("Exceeds vendor token balance");
     });
   });
 });
