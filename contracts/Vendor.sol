@@ -17,11 +17,10 @@ contract Vendor is Ownable {
     function buyTokens() public payable {
         require(msg.value != 0, "Insufficient Eth for transfer");
         require(
-            msg.value / 1000000000000000000 <= token.balanceOf(address(this)),
+            msg.value * tokensPerEth <= token.balanceOf(address(this)),
             "Exceeds vendor token balance"
         );
-        uint256 amountOfTokens = (msg.value / 1000000000000000000) *
-            tokensPerEth;
+        uint256 amountOfTokens = msg.value * tokensPerEth;
         token.transfer(msg.sender, amountOfTokens);
         emit BuyTokens(msg.sender, msg.value, amountOfTokens);
     }

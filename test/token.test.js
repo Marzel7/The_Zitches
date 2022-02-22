@@ -52,10 +52,10 @@ describe("Simple Token Example", function () {
         console.log("\t", " ⚖️ Starting balance: ", startingBalance.toNumber());
         expect(await token.balanceOf(deployer.address)).to.equal(0);
         expect(await token.balanceOf(vendor.address)).to.equal(totalSupply);
-        // deployer buyes back 1 eth of tokens (10 TKNS)
+        // deployer buys back 1 eth of tokens (10 TKNS)
         console.log("\t", " 🔨 Transferring...");
         const buyTokensResult = await vendor.connect(deployer).buyTokens({
-          value: parseEther("1"),
+          value: 1,
         });
 
         console.log("\t", " 🏷  mint tx: ", buyTokensResult.hash);
@@ -98,7 +98,7 @@ describe("Simple Token Example", function () {
     describe("Withdrawal", async function () {
       it("Withdraws eth from contract", async function () {
         // 1 eth in contract balance
-        expect(await vendor.balance()).to.equal(parseEther("1"));
+        expect(await vendor.balance()).to.equal(1);
         // inital 10,000 account balance
         expect(await prov.getBalance(owner.address)).to.be.equal(
           parseEther("10000")
@@ -130,7 +130,7 @@ describe("Simple Token Example", function () {
       startingBalance = await token.balanceOf(deployer.address);
 
       const buyTokensResult = await vendor.connect(deployer).buyTokens({
-        value: parseEther("1"),
+        value: 1,
       });
       const newBalance = startingBalance.toNumber() + ethAmount * tokensPerEth;
 
@@ -154,7 +154,7 @@ describe("Simple Token Example", function () {
     it("Cannot exceed vendor token supply", async () => {
       vendorBalance = await token.balanceOf(vendor.address);
       const buyTokensResult = await vendor.connect(deployer).buyTokens({
-        value: parseEther("98"),
+        value: 98,
       });
       vendorBalance = await token.balanceOf(vendor.address);
       console.log(
@@ -164,7 +164,7 @@ describe("Simple Token Example", function () {
       );
 
       await expect(
-        vendor.connect(deployer).buyTokens({ value: parseEther("100") })
+        vendor.connect(deployer).buyTokens({ value: 100 })
       ).to.be.revertedWith("Exceeds vendor token balance");
     });
   });

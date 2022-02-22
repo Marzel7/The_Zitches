@@ -32,7 +32,7 @@ export default function Search() {
 
   return (
     <>
-      <Box w="600px" ml="300px" py={10}>
+      <Box w="600px" ml="300px" py={5}>
         <Stack isInline spacing={1}>
           <Text textStyle="h4">TKN Balance</Text>
           {accountTokenBalance && (
@@ -45,7 +45,7 @@ export default function Search() {
               <Input
                 value={ethAddress}
                 onChange={(e) => handleEthAddress(e.currentTarget.value)}
-                fontSize={12}
+                fontSize={11}
                 focusBorderColor="blue"
                 type={"text"}
                 spellCheck="false"

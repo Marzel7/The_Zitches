@@ -118,7 +118,7 @@ const Send = () => {
                   width={35}
                   pr="0.5rem"
                   type={"text"}
-                  placeholder="Eth"
+                  placeholder="eth"
                   variant="unstyled"
                   text-align="right"
                 />
@@ -136,7 +136,7 @@ const Send = () => {
                   <Button
                     variant="outline"
                     focusBorderColor="blue"
-                    fontSize={12}
+                    fontSize={11}
                     size="sm"
                     onClick={(e) => handleBuyTokens(amount)}
                     variant="outline"
