@@ -10,7 +10,7 @@ require("dotenv").config();
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "hardhat",
+  defaultNetwork: "localhost",
 
   paths: {
     artifacts: "./src/artifacts",

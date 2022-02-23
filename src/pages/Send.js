@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useEtherBalance, useEthers, useContractFunction } from "@usedapp/core";
-
+import { parseEther, formatEther } from "ethers/lib/utils";
 import { Contract } from "@ethersproject/contracts";
+import { BigNumber } from "ethers";
 import {
   Stack,
   Text,
@@ -26,7 +27,6 @@ import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { formatBalance } from "../helpers.js";
 
 import { useTokenBalanceCall } from "../hooks";
-import { parseEther } from "ethers/lib/utils";
 
 const Send = () => {
   let token, vendor, networkId;
@@ -59,7 +59,7 @@ const Send = () => {
 
   const handleBuyTokens = (amount) => {
     setDisabled(true);
-    send({ value: parseEther(amount.toString()) });
+    send({ value: parseEther(amount) });
   };
   useEffect(() => {
     if (state.status != "Mining") {

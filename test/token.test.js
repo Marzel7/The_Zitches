@@ -5,6 +5,7 @@ const { ethers } = hre;
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const { parseEther, parseUnits, formatEther } = require("ethers/lib/utils");
+const { parse } = require("@ethersproject/transactions");
 
 use(solidity);
 // use hardhat config
@@ -55,7 +56,7 @@ describe("Simple Token Example", function () {
         // deployer buys back 1 eth of tokens (10 TKNS)
         console.log("\t", " 🔨 Transferring...");
         const buyTokensResult = await vendor.connect(deployer).buyTokens({
-          value: 1,
+          value: parseEther("1"),
         });
 
         console.log("\t", " 🏷  mint tx: ", buyTokensResult.hash);
@@ -98,7 +99,7 @@ describe("Simple Token Example", function () {
     describe("Withdrawal", async function () {
       it("Withdraws eth from contract", async function () {
         // 1 eth in contract balance
-        expect(await vendor.balance()).to.equal(1);
+        expect(await vendor.balance()).to.equal(parseEther("1"));
         // inital 10,000 account balance
         expect(await prov.getBalance(owner.address)).to.be.equal(
           parseEther("10000")
@@ -130,7 +131,7 @@ describe("Simple Token Example", function () {
       startingBalance = await token.balanceOf(deployer.address);
 
       const buyTokensResult = await vendor.connect(deployer).buyTokens({
-        value: 1,
+        value: parseEther("1"),
       });
       const newBalance = startingBalance.toNumber() + ethAmount * tokensPerEth;
 
@@ -154,7 +155,7 @@ describe("Simple Token Example", function () {
     it("Cannot exceed vendor token supply", async () => {
       vendorBalance = await token.balanceOf(vendor.address);
       const buyTokensResult = await vendor.connect(deployer).buyTokens({
-        value: 98,
+        value: parseEther("98"),
       });
       vendorBalance = await token.balanceOf(vendor.address);
       console.log(
@@ -164,8 +165,65 @@ describe("Simple Token Example", function () {
       );
 
       await expect(
-        vendor.connect(deployer).buyTokens({ value: 100 })
+        vendor.connect(deployer).buyTokens({ value: parseEther("100") })
       ).to.be.revertedWith("Exceeds vendor token balance");
+    });
+  });
+
+  describe("Approvals", function () {
+    it("Requires vendor approval", async () => {
+      await expect(vendor.sellTokens(1)).to.be.revertedWith(
+        "ERC20: transfer amount exceeds allowance"
+      );
+      await token.connect(deployer).approve(vendor.address, 1000);
+      deployerEthBal = await prov.getBalance(deployer.address);
+      vendorEthBal = await prov.getBalance(vendor.address);
+      deployerTokenBal = await token.balanceOf(deployer.address);
+      vendorTokenBal = await token.balanceOf(vendor.address);
+      // console.log(
+      //   "\t",
+      //   " 🔎 Checking deployer eth balance: ",
+      //   formatEther(deployerEthBal),
+      //   "eth"
+      // );
+      // console.log(
+      //   "\t",
+      //   " 🔎 Checking deployer Token balance: ",
+      //   deployerTokenBal.toString(),
+      //   "TKN"
+      // );
+
+      // console.log(
+      //   "\t",
+      //   " 🔎 Checking vendor eth balance: ",
+      //   formatEther(vendorEthBal),
+      //   "eth"
+      // );
+      // console.log(
+      //   "\t",
+      //   " 🔎 Checking vendor Token balance: ",
+      //   vendorTokenBal.toString(),
+      //   "TKN"
+      // );
+    });
+    it("sells to approved contract", async () => {
+      // Sell single token to vendor
+      const sellTokensResult = await vendor.sellTokens(ethAmount);
+
+      // vendor Token balance increases
+      expect(await token.balanceOf(vendor.address)).to.be.equal(
+        vendorTokenBal + ethAmount
+      );
+      // deployer Token balance decreases
+      expect(await token.balanceOf(deployer.address)).to.be.equal(
+        deployerTokenBal - ethAmount
+      );
+      // vendor eth balance has decreased by 1 eth
+      expect(await prov.getBalance(vendor.address)).to.be.equal(
+        parseEther("98")
+      );
+      // deployer eth balance has increased by ~ 1 eth
+      expect(await prov.getBalance(deployer.address)).to.be.gt(deployerEthBal);
     });
   });
 });
