@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useEtherBalance, useEthers, useContractFunction } from "@usedapp/core";
-import { parseEther, formatEther } from "ethers/lib/utils";
+import { parseEther } from "ethers/lib/utils";
 import { Contract } from "@ethersproject/contracts";
-import { BigNumber } from "ethers";
 import {
   Stack,
   Text,
@@ -16,6 +15,8 @@ import {
 import History from "./History";
 import Search from "../components/subcomponents/Search";
 import Withdraw from "../components/subcomponents/Withdraw";
+import Sell from "../components/subcomponents/Sell";
+import TransactionType from "../components/subcomponents/TransactionType";
 
 // import contract address
 import adrs from "../contracts/contract-address.json";
@@ -44,6 +45,7 @@ const Send = () => {
 
   // Hooks
   const balance = useEtherBalance(account);
+  const vendorEthBalance = useEtherBalance(vendor.address);
 
   // Vendor hooks
   const vendorTokenBalance = useTokenBalanceCall(adrs.vendorAddr);
@@ -72,6 +74,7 @@ const Send = () => {
   const handle = (amount) => {
     setAmount(amount);
     setEthValue("$" + amount * etherPrice);
+    console.log("vendorEthBalance", vendorEthBalance.toString());
   };
 
   return (
@@ -108,7 +111,8 @@ const Send = () => {
           </Box>
           <Stack py={7} px={300}>
             <Box width={250} px={1} textStyle="h5">
-              <InputGroup size="md">
+              <TransactionType></TransactionType>
+              <InputGroup size="md" ml="65" mt="5">
                 <Input
                   value={amount}
                   onChange={(e) => handle(e.currentTarget.value)}
@@ -153,8 +157,10 @@ const Send = () => {
           <History></History>
         </Stack>
       </Stack>
+
       <Search></Search>
       <Withdraw></Withdraw>
+      {/* <Sell></Sell> */}
     </>
   );
 };

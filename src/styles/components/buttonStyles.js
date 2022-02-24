@@ -14,5 +14,17 @@ export const ButtonStyles = {
         boxShadow: "none",
       },
     }),
+    empty: (props) => ({
+      _hover: {
+        boxShadow: "none",
+        background: "gray.900",
+        color: "gray.100",
+        outline: "none",
+      },
+      _focus: {
+        outline: "0px",
+        boxShadow: "none",
+      },
+    }),
   },
 };

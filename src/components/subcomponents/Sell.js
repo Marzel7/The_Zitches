@@ -33,15 +33,15 @@ export default function Sell() {
 
   const contractEthBalance = useEtherBalance(vendor.address);
   const handleSellBtn = () => {
-    console.log("log");
-    send({ value: "1" });
+    console.log("log", contractEthBalance.toString());
+    send(2);
   };
 
   return (
     <Box w="600px" ml="300px">
       <Stack isInline spacing={1}>
-        {/* <Text textStyle="h4">Contract Balance</Text>
-        {contractEthBalance && (
+        {/* <Text textStyle="h4">Contract Balance</Text> */}
+        {/* {contractEthBalance && (
           <Text textStyle="h5">{formatEther(contractEthBalance)} eth</Text>
         )} */}
       </Stack>

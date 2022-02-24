@@ -6,7 +6,7 @@ import "./Token.sol";
 import "hardhat/console.sol";
 
 contract Vendor is Ownable {
-    uint256 public constant tokensPerEth = 10;
+    uint256 public constant tokensPerEth = 1;
     Token public token;
     event BuyTokens(address sender, uint256 amount, uint256 tokensPerEth);
 

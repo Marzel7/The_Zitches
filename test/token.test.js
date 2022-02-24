@@ -17,6 +17,7 @@ describe("Simple Token Example", function () {
   const totalSupply = 1000;
   const tokensPerEth = 10;
   const ethAmount = 1;
+  const sellAmount = 10;
   const prov = ethers.provider;
 
   beforeEach(async function () {
@@ -172,7 +173,7 @@ describe("Simple Token Example", function () {
 
   describe("Approvals", function () {
     it("Requires vendor approval", async () => {
-      await expect(vendor.sellTokens(1)).to.be.revertedWith(
+      await expect(vendor.sellTokens(sellAmount)).to.be.revertedWith(
         "ERC20: transfer amount exceeds allowance"
       );
       await token.connect(deployer).approve(vendor.address, 1000);
@@ -208,20 +209,18 @@ describe("Simple Token Example", function () {
     });
     it("sells to approved contract", async () => {
       // Sell single token to vendor
-      const sellTokensResult = await vendor.sellTokens(ethAmount);
+      const sellTokensResult = await vendor.sellTokens(sellAmount);
 
       // vendor Token balance increases
       expect(await token.balanceOf(vendor.address)).to.be.equal(
-        vendorTokenBal + ethAmount
+        vendorTokenBal + sellAmount
       );
       // deployer Token balance decreases
       expect(await token.balanceOf(deployer.address)).to.be.equal(
-        deployerTokenBal - ethAmount
+        deployerTokenBal - sellAmount
       );
       // vendor eth balance has decreased by 1 eth
-      expect(await prov.getBalance(vendor.address)).to.be.equal(
-        parseEther("98")
-      );
+      expect(await prov.getBalance(vendor.address)).to.be.lt(vendorEthBal);
       // deployer eth balance has increased by ~ 1 eth
       expect(await prov.getBalance(deployer.address)).to.be.gt(deployerEthBal);
     });

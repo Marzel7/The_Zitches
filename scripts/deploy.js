@@ -20,6 +20,8 @@ async function main() {
 
   const Vendor = await ethers.getContractFactory("Vendor");
   vendor = await Vendor.deploy(token.address);
+  // Approve vendor to sell users tokens
+  await token.approve(vendor.address, 1000);
 
   console.log("Token deployed to:", token.address);
   console.log("Vendor deployed to:", vendor.address);

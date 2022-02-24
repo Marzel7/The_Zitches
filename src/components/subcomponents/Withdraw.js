@@ -16,7 +16,7 @@ import adrs from "../../contracts/contract-address.json";
 // import ABI
 import VendorContract from "../../contracts/abis/Vendor.json";
 
-export default function Withdraw() {
+export default function Withdraw(props) {
   let vendor, networkId;
 
   const { account, chainId } = useEthers();
@@ -31,9 +31,12 @@ export default function Withdraw() {
 
   const { send, state } = useContractFunction(vendor, "withdraw", {});
 
-  const contractEthBalance = useEtherBalance(vendor.address);
+  // Hooks
+
+  const vendorEthBalance = useEtherBalance(vendor.address);
+
   const handleWithdrawBtn = () => {
-    console.log(formatEther(contractEthBalance));
+    console.log(formatEther(vendorEthBalance));
     send();
   };
 
@@ -41,15 +44,15 @@ export default function Withdraw() {
     <Box w="600px" ml="300px">
       <Stack isInline spacing={1}>
         <Text textStyle="h4">Contract Balance</Text>
-        {contractEthBalance && (
-          <Text textStyle="h5">{formatEther(contractEthBalance)} eth</Text>
+        {vendorEthBalance && (
+          <Text textStyle="h5">{formatEther(vendorEthBalance)} eth</Text>
         )}
       </Stack>
       <Stack>
         <Box width={100} px={3} py={1} textStyle="h5">
           <InputGroup size="md">
             <InputRightElement width="6.5rem">
-              <Button
+              {/* <Button
                 variant="outline"
                 focusBorderColor="blue"
                 size="sm"
@@ -58,7 +61,7 @@ export default function Withdraw() {
                 variant="outline"
               >
                 Withdraw
-              </Button>
+              </Button> */}
             </InputRightElement>
           </InputGroup>
         </Box>
