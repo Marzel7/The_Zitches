@@ -15,7 +15,6 @@ import {
 import History from "./History";
 import Search from "../components/subcomponents/Search";
 import Withdraw from "../components/subcomponents/Withdraw";
-import Sell from "../components/subcomponents/Sell";
 import TransactionType from "../components/subcomponents/TransactionType";
 
 // import contract address
@@ -27,7 +26,7 @@ import VendorContract from "../contracts/abis/Vendor.json";
 import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { formatBalance } from "../helpers.js";
 
-import { useTokenBalanceCall } from "../hooks";
+import { useTokenBalanceCall, useContractMethod } from "../hooks";
 
 const Send = () => {
   let token, vendor, networkId;
@@ -46,6 +45,7 @@ const Send = () => {
   // Hooks
   const balance = useEtherBalance(account);
   const vendorEthBalance = useEtherBalance(vendor.address);
+  //const buyTokensCall = useBuyTokensCall();
 
   // Vendor hooks
   const vendorTokenBalance = useTokenBalanceCall(adrs.vendorAddr);
@@ -54,27 +54,36 @@ const Send = () => {
   const [amount, setAmount] = useState("0");
   const [disabled, setDisabled] = useState(false);
   const [ethValue, setEthValue] = useState("");
+  const [transactionType, setTransactionType] = useState("");
 
-  const { send, state } = useContractFunction(vendor, "buyTokens", {
-    transactionName: "buyTokens",
-  });
+  const { state: setBuyState, send: buyTokens } =
+    useContractMethod("buyTokens");
+  const { state: setSellState, send: sellTokens } =
+    useContractMethod("sellTokens");
 
   const handleBuyTokens = (amount) => {
     setDisabled(true);
-    send({ value: parseEther(amount) });
+    transactionType === "Buy"
+      ? buyTokens({ value: parseEther(amount) })
+      : sellTokens(amount);
   };
   useEffect(() => {
-    if (state.status != "Mining") {
+    if ((setBuyState.status || setSellState.status) != "Mining") {
       setDisabled(false);
       setAmount("");
       setEthValue("");
     }
-  }, [state]);
+  }, [setBuyState, setSellState]);
 
   const handle = (amount) => {
     setAmount(amount);
     setEthValue("$" + amount * etherPrice);
     console.log("vendorEthBalance", vendorEthBalance.toString());
+  };
+
+  const purchaseType = (childData) => {
+    setTransactionType(childData);
+    console.log("parent", childData);
   };
 
   return (
@@ -111,7 +120,7 @@ const Send = () => {
           </Box>
           <Stack py={7} px={300}>
             <Box width={250} px={1} textStyle="h5">
-              <TransactionType></TransactionType>
+              <TransactionType purchaseType={purchaseType}></TransactionType>
               <InputGroup size="md" ml="65" mt="5">
                 <Input
                   value={amount}
@@ -145,7 +154,7 @@ const Send = () => {
                     onClick={(e) => handleBuyTokens(amount)}
                     variant="outline"
                   >
-                    Confirm
+                    Confirm {transactionType}
                   </Button>
                 </InputRightElement>
               </InputGroup>

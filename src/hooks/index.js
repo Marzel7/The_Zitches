@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
-import { useContractCall } from "@usedapp/core";
+import { useContractCall, useContractFunction } from "@usedapp/core";
+import { Contract } from "@ethersproject/contracts";
 
 // import ABI
 import StakerContract from "../contracts/abis/Staker.json";
@@ -8,6 +9,23 @@ import TokenContract from "../contracts/abis/Token.json";
 import VendorContract from "../contracts/abis/Vendor.json";
 // import contract address
 import adrs from "../contracts/contract-address.json";
+
+// Vendor contract
+const vendorContract = new Contract(adrs.vendorAddr, VendorContract.abi);
+
+// export function useBuyTokensCall() {
+//   const { state, send } = useContractFunction(vendorContract, "buyTokens", {
+//     transactionName: "buyTokens",
+//   });
+//   return { state, send };
+// }
+
+export function useContractMethod(methodName) {
+  const { state, send } = useContractFunction(vendorContract, methodName, {
+    transactionName: methodName,
+  });
+  return { state, send };
+}
 
 export const useTokenBalanceCall = (address) => {
   const tokenBalance = useContractCall(

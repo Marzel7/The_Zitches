@@ -25,7 +25,8 @@ export default function History() {
     notifications.map((notification) => {
       if (
         notification.type === "transactionSucceed" &&
-        notification.transactionName == "buyTokens"
+        (notification.transactionName == "buyTokens" ||
+          notification.transactionName == "sellTokens")
       ) {
         console.log(notification.transactionName);
         {
@@ -63,12 +64,13 @@ export default function History() {
                 {transaction.transaction.from.substring(36)}
               </Td>
             )}
-            {transaction.transaction ? (
+            {transaction.receipt.logs && (
               <Td color="gray.500">
                 {parseInt(transaction.receipt.logs[0].data.toString(), 16)}
               </Td>
-            ) : (
-              <Td>d</Td>
+            )}
+            {transaction.transaction && (
+              <Td>{transaction.transactionName === "buyTokens" ? "+" : "-"}</Td>
             )}
           </Tr>
         );
@@ -86,8 +88,9 @@ export default function History() {
           <Tr>
             <Th>Date</Th>
             <Th>From</Th>
-            {/* <Th>To</Th> */}
+
             <Th>TKN</Th>
+            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>{renderRow()}</Tbody>
