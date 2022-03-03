@@ -22,8 +22,8 @@ nvm install; # to install the version in .nvmrc
 ```
 
 1. Clone this repo with git
-2. Install dependencies by running `yarn`
-3. Start the development server with `yarn dev`
+2. Install dependencies by running `npm i`
+3. Start the development server with `npm run start`
 4. Open development site by going to `http:localhost:3000`
 
 ### Local Development Testing
@@ -34,4 +34,15 @@ nvm install; # to install the version in .nvmrc
 ### Local Deployment
 
 1. Switch defaultNetwork: "localhost" in hardhat.config.js
-2. 'hh run scripts/deploy.js'
+2. `hh node` - run instance of hardhat local chain
+3. `hh run scripts/deploy.js`- deploy contracts on localhost
+
+### Rinkeby deployment
+
+To deploy to Rinkeby, these are the steps:
+
+1. `hh run scripts/deploy.js --network rinkeby`
+
+```
+
+```
