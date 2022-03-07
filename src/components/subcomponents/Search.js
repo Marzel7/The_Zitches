@@ -40,7 +40,7 @@ export default function Search() {
           )}
         </Stack>
         <Stack>
-          <Box width={420} px={1} py={1} textStyle="h5">
+          <Box width={420} px={1} py={2} textStyle="h5">
             <InputGroup size="md">
               <Input
                 value={ethAddress}

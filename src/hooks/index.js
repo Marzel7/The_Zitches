@@ -13,13 +13,6 @@ import adrs from "../contracts/contract-address.json";
 // Vendor contract
 const vendorContract = new Contract(adrs.vendorAddr, VendorContract.abi);
 
-// export function useBuyTokensCall() {
-//   const { state, send } = useContractFunction(vendorContract, "buyTokens", {
-//     transactionName: "buyTokens",
-//   });
-//   return { state, send };
-// }
-
 export function useContractMethod(methodName) {
   const { state, send } = useContractFunction(vendorContract, methodName, {
     transactionName: methodName,

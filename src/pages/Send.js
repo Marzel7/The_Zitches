@@ -24,9 +24,10 @@ import TokenContract from "../contracts/abis/Token.json";
 import VendorContract from "../contracts/abis/Vendor.json";
 
 import { useCoingeckoPrice } from "@usedapp/coingecko";
-import { formatBalance } from "../helpers.js";
+import { formatBalance, formatUSD } from "../helpers.js";
 
 import { useTokenBalanceCall, useContractMethod } from "../hooks";
+import { type } from "@testing-library/user-event/dist/type";
 
 const Send = () => {
   let token, vendor, networkId;
@@ -45,7 +46,6 @@ const Send = () => {
   // Hooks
   const balance = useEtherBalance(account);
   const vendorEthBalance = useEtherBalance(vendor.address);
-  //const buyTokensCall = useBuyTokensCall();
 
   // Vendor hooks
   const vendorTokenBalance = useTokenBalanceCall(adrs.vendorAddr);
@@ -75,10 +75,32 @@ const Send = () => {
     }
   }, [setBuyState, setSellState]);
 
-  const handle = (amount) => {
-    setAmount(amount);
-    setEthValue("$" + amount * etherPrice);
-    console.log("vendorEthBalance", vendorEthBalance.toString());
+  useEffect(() => {
+    setAmount("");
+    setEthValue("");
+  }, [transactionType]);
+
+  const handle = (e) => {
+    const re = /^[0-9\b]+$/;
+
+    // if value is not blank, then test the regex
+
+    if (e.target.value === "" || re.test(e.target.value)) {
+      if (
+        Number(e.target.value) <= Number(vendorTokenBalance) &&
+        transactionType === "Buy"
+      ) {
+        setAmount(e.target.value);
+        setEthValue("$" + formatUSD(e.target.value * etherPrice));
+      }
+      if (
+        Number(e.target.value) <= Number(accountTokenBalance) &&
+        transactionType === "Sell"
+      ) {
+        setAmount(e.target.value);
+        setEthValue("$" + formatUSD(e.target.value * etherPrice));
+      }
+    }
   };
 
   const purchaseType = (childData) => {
@@ -124,7 +146,7 @@ const Send = () => {
               <InputGroup size="md" ml="65" mt="5">
                 <Input
                   value={amount}
-                  onChange={(e) => handle(e.currentTarget.value)}
+                  onChange={(e) => handle(e)}
                   disabled={disabled}
                   fontSize={13}
                   focusBorderColor="blue"
@@ -138,7 +160,7 @@ const Send = () => {
 
                 <Input
                   value={ethValue}
-                  onChange={(e) => setEthValue(e.currentTarget.value)}
+                  // onChange={(e) => setEthValue(e.currentTarget.value)}
                   fontSize={13}
                   focusBorderColor="blue"
                   pr="0.5rem"
@@ -169,7 +191,6 @@ const Send = () => {
 
       <Search></Search>
       <Withdraw></Withdraw>
-      {/* <Sell></Sell> */}
     </>
   );
 };

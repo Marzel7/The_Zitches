@@ -40,12 +40,12 @@ export default function History() {
               ) === i
           )
         );
-        console.log(
-          "notificationHistory",
-          parseInt(notification.receipt.logs[0].data.toString(), 16),
-          "length",
-          notificationHistory.length
-        );
+        // console.log(
+        //   "notificationHistory",
+        //   parseInt(notification.receipt.logs[0].data.toString(), 16),
+        //   "length",
+        //   notificationHistory.length
+        // );
       }
     });
   }, [notifications]);
