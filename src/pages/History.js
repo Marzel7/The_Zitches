@@ -14,6 +14,7 @@ import {
 
 import { useNotifications } from "@usedapp/core";
 import { formatDate } from "../helpers";
+import { formatBalance } from "../helpers.js";
 
 export default function History() {
   const { notifications } = useNotifications();
@@ -21,7 +22,6 @@ export default function History() {
   const [rowNum, setRowNum] = useState("3");
 
   useEffect(() => {
-    // setNotificationHistory(notifications);
     notifications.map((notification) => {
       if (
         notification.type === "transactionSucceed" &&
@@ -40,12 +40,6 @@ export default function History() {
               ) === i
           )
         );
-        // console.log(
-        //   "notificationHistory",
-        //   parseInt(notification.receipt.logs[0].data.toString(), 16),
-        //   "length",
-        //   notificationHistory.length
-        // );
       }
     });
   }, [notifications]);
@@ -66,7 +60,7 @@ export default function History() {
             )}
             {transaction.receipt.logs && (
               <Td color="gray.500">
-                {parseInt(transaction.receipt.logs[0].data.toString(), 16)}
+                {formatBalance(transaction.receipt.logs[0].data.toString(), 16)}
               </Td>
             )}
             {transaction.transaction && (

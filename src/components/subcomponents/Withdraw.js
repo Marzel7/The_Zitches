@@ -11,6 +11,7 @@ import {
 import { useEtherBalance, useEthers, useContractFunction } from "@usedapp/core";
 import { Contract } from "@ethersproject/contracts";
 import { formatEther } from "@ethersproject/units";
+import { formatBalance } from "../../helpers.js";
 // import contract address
 import adrs from "../../contracts/contract-address.json";
 // import ABI
@@ -35,17 +36,17 @@ export default function Withdraw(props) {
 
   const vendorEthBalance = useEtherBalance(vendor.address);
 
-  const handleWithdrawBtn = () => {
-    console.log(formatEther(vendorEthBalance));
-    send();
-  };
+  // const handleWithdrawBtn = () => {
+  //   console.log(formatEther(vendorEthBalance));
+  //   send();
+  // };
 
   return (
     <Box w="600px" ml="300px">
       <Stack isInline spacing={1}>
         <Text textStyle="h4">Contract Balance</Text>
         {vendorEthBalance && (
-          <Text textStyle="h5">{formatEther(vendorEthBalance)} eth</Text>
+          <Text textStyle="h5">{formatBalance(vendorEthBalance)} eth</Text>
         )}
       </Stack>
       <Stack>

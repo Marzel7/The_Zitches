@@ -1,226 +1,300 @@
-const hre = require("hardhat");
-// import { formatEther } from "@ethersproject/units";
+//
+// this script executes when you run 'yarn test'
+//
+// you can also test remote submissions like:
+// CONTRACT_ADDRESS=0x43Ab1FCd430C1f20270C2470f857f7a006117bbb yarn test --network rinkeby
+//
+// you can even run mint commands if the tests pass like:
+// yarn test && echo "PASSED" || echo "FAILED"
+//
 
+const hre = require("hardhat");
 const { ethers } = hre;
 const { use, expect } = require("chai");
 const { solidity } = require("ethereum-waffle");
-const { parseEther, parseUnits, formatEther } = require("ethers/lib/utils");
-const { parse } = require("@ethersproject/transactions");
 
 use(solidity);
-// use hardhat config
 
-describe("Simple Token Example", function () {
-  this.timeout(120000);
+describe("🚩 Challenge 2: 🏵 Token Vendor 🤖", function () {
+  this.timeout(125000);
 
-  let token, vendor, deployer, buyer, addr2, owner;
-  const totalSupply = 1000;
-  const tokensPerEth = 1;
-  const ethAmount = 1;
-  const sellAmount = 1;
-  const prov = ethers.provider;
+  let yourToken;
 
-  beforeEach(async function () {
-    [deployer, buyer, addr2, owner] = await ethers.getSigners();
+  if (process.env.CONTRACT_ADDRESS) {
+    // live contracts, token already deployed
+  } else {
+    it("Should deploy YourToken", async function () {
+      const YourToken = await ethers.getContractFactory("Token");
+      yourToken = await YourToken.deploy();
+    });
+    describe("totalSupply()", function () {
+      it("Should have a total supply of at least 1000", async function () {
+        const totalSupply = await yourToken.totalSupply();
+        const totalSupplyInt = parseInt(ethers.utils.formatEther(totalSupply));
+        console.log("\t", " 🧾 Total Supply:", totalSupplyInt);
+        expect(totalSupplyInt).to.greaterThan(1999);
+      });
+    });
+  }
+
+  let vendor;
+
+  if (process.env.CONTRACT_ADDRESS) {
+    it("Should connect to external contract", async function () {
+      vendor = await ethers.getContractAt(
+        "Vendor",
+        process.env.CONTRACT_ADDRESS
+      );
+      console.log(`\t`, "🛰 Connected to:", vendor.address);
+
+      console.log(`\t`, "📡 Loading the yourToken address from the Vendor...");
+      console.log(
+        `\t`,
+        "⚠️ Make sure *yourToken* is public in the Vendor.sol!"
+      );
+      let tokenAddress = await vendor.yourToken();
+      console.log("\t", "🏷 Token Address:", tokenAddress);
+
+      yourToken = await ethers.getContractAt("YourToken", tokenAddress);
+      console.log(`\t`, "🛰 Connected to YourToken at:", yourToken.address);
+    });
+  } else {
+    it("Should deploy YourToken", async function () {
+      const Vendor = await ethers.getContractFactory("Vendor");
+      vendor = await Vendor.deploy(yourToken.address);
+
+      console.log("Transferring 1000 tokens to the vendor...");
+      await yourToken.transfer(vendor.address, ethers.utils.parseEther("1000"));
+      expect(await yourToken.balanceOf(vendor.address)).to.equal(
+        ethers.utils.parseEther("1000")
+      );
+    });
+  }
+
+  describe("💵 buyTokens()", function () {
+    it("Should let us buy tokens and our balance should go up...", async function () {
+      const [owner] = await ethers.getSigners();
+      console.log("\t", " 🧑‍🏫 Tester Address: ", owner.address);
+
+      const startingBalance = await yourToken.balanceOf(owner.address);
+      console.log(
+        "\t",
+        " ⚖️ Starting balance: ",
+        ethers.utils.formatEther(startingBalance)
+      );
+
+      console.log("\t", " 💸 Buying...");
+      const buyTokensResult = await vendor.buyTokens({
+        value: ethers.utils.parseEther("0.001"),
+      });
+      console.log("\t", " 🏷  buyTokens Result: ", buyTokensResult.hash);
+
+      console.log("\t", " ⏳ Waiting for confirmation...");
+      const txResult = await buyTokensResult.wait();
+      expect(txResult.status).to.equal(1);
+
+      const newBalance = await yourToken.balanceOf(owner.address);
+      console.log(
+        "\t",
+        " 🔎 New balance: ",
+        ethers.utils.formatEther(newBalance)
+      );
+      expect(newBalance).to.equal(
+        startingBalance.add(ethers.utils.parseEther("0.1"))
+      );
+    });
   });
 
-  // console.log("hre:",Object.keys(hre)) // <-- you can access the hardhat runtime env here
+  describe("💵 sellTokens()", function () {
+    it("Should let us sell tokens and we should get eth back...", async function () {
+      const [owner] = await ethers.getSigners();
 
-  describe("Token", function () {
-    if (process.env.CONTRACT_ADDRESS) {
+      const startingETHBalance = await ethers.provider.getBalance(
+        owner.address
+      );
+      console.log(
+        "\t",
+        " ⚖️ Starting ETH balance: ",
+        ethers.utils.formatEther(startingETHBalance)
+      );
+
+      const startingBalance = await yourToken.balanceOf(owner.address);
+      console.log(
+        "\t",
+        " ⚖️ Starting balance: ",
+        ethers.utils.formatEther(startingBalance)
+      );
+
+      console.log("\t", " 🙄 Approving...");
+      const approveTokensResult = await yourToken.approve(
+        vendor.address,
+        ethers.utils.parseEther("0.1")
+      );
+      console.log(
+        "\t",
+        " 🏷  approveTokens Result Result: ",
+        approveTokensResult.hash
+      );
+
+      console.log("\t", " ⏳ Waiting for confirmation...");
+      const atxResult = await approveTokensResult.wait();
+      expect(atxResult.status).to.equal(1);
+
+      console.log("\t", " 🍾 Selling...");
+      const sellTokensResult = await vendor.sellTokens(
+        ethers.utils.parseEther("0.1")
+      );
+      console.log("\t", " 🏷  sellTokens Result: ", sellTokensResult.hash);
+
+      console.log("\t", " ⏳ Waiting for confirmation...");
+      const txResult = await sellTokensResult.wait();
+      expect(txResult.status).to.equal(1);
+
+      const newBalance = await yourToken.balanceOf(owner.address);
+      console.log(
+        "\t",
+        " 🔎 New balance: ",
+        ethers.utils.formatEther(newBalance)
+      );
+      expect(newBalance).to.equal(
+        startingBalance.sub(ethers.utils.parseEther("0.1"))
+      );
+
+      const newETHBalance = await ethers.provider.getBalance(owner.address);
+      console.log(
+        "\t",
+        " 🔎 New ETH balance: ",
+        ethers.utils.formatEther(newETHBalance)
+      );
+      const ethChange = newETHBalance.sub(startingETHBalance).toNumber();
+      expect(ethChange).to.greaterThan(100000000000000);
+    });
+  });
+
+  //console.log("hre:",Object.keys(hre)) // <-- you can access the hardhat runtime env here
+  /*
+  describe("Staker", function () {
+
+    if(process.env.CONTRACT_ADDRESS){
       it("Should connect to external contract", async function () {
-        token = await ethers.getContractAt(
-          "Token",
-          process.env.CONTRACT_ADDRESS
-        );
-        console.log("     🛰 Connected to external contract", token.address);
+        stakerContract = await ethers.getContractAt("Staker",process.env.CONTRACT_ADDRESS);
+        console.log("     🛰 Connected to external contract",myContract.address)
       });
-    } else {
-      it("Should deploy contracts", async function () {
-        const Token = await ethers.getContractFactory("Token");
-        token = await Token.deploy();
-        const Vendor = await ethers.getContractFactory("Vendor");
-        vendor = await Vendor.deploy(token.address);
-
-        // transfer balance to vendor
-        token.transfer(vendor.address, totalSupply);
+    }else{
+      it("Should deploy ExampleExternalContract", async function () {
+        const ExampleExternalContract = await ethers.getContractFactory("ExampleExternalContract");
+        exampleExternalContract = await ExampleExternalContract.deploy();
+      });
+      it("Should deploy Staker", async function () {
+        const Staker = await ethers.getContractFactory("Staker");
+        stakerContract = await Staker.deploy(exampleExternalContract.address);
       });
     }
 
-    describe("BuyTokens", function () {
-      it("Should allow vendor to sell tokens", async function () {
-        // vendor has initial token supply
-        let startingBalance = await token.balanceOf(vendor.address);
-        console.log("\t", " ⚖️ Starting balance: ", startingBalance.toNumber());
-        expect(await token.balanceOf(deployer.address)).to.equal(0);
-        expect(await token.balanceOf(vendor.address)).to.equal(totalSupply);
-        // deployer buys back 1 eth of tokens (1 TKNS)
-        console.log("\t", " 🔨 Transferring...");
-        const buyTokensResult = await vendor.connect(deployer).buyTokens({
-          value: parseEther("1"),
-        });
+    describe("mintItem()", function () {
+      it("Balance should go up when you stake()", async function () {
+        const [ owner ] = await ethers.getSigners();
 
-        console.log("\t", " 🏷  mint tx: ", buyTokensResult.hash);
-        console.log("\t", " ⏳ Waiting for confirmation...");
-        const txResult = await buyTokensResult.wait(0);
-        startingBalance = await token.balanceOf(deployer.address);
-        console.log(
-          "\t",
-          " 🔎 Checking new buyer balance: ",
-          startingBalance.toString()
-        );
+        console.log('\t'," 🧑‍🏫 Tester Address: ",owner.address)
 
-        expect(await token.balanceOf(deployer.address)).to.equal(
-          ethAmount * tokensPerEth
-        );
-        let balance = await prov.getBalance(vendor.address);
-        // ); // 1 * 10  = 10 tokens
-        balance = totalSupply - ethAmount * tokensPerEth; // 9990 tokens
+        const startingBalance = await stakerContract.balances(owner.address)
+        console.log('\t'," ⚖️ Starting balance: ",startingBalance.toNumber())
 
-        expect(await token.balanceOf(vendor.address)).to.equal(
-          balance.toString()
-        );
-      });
-    });
+        console.log('\t'," 🔨 Staking...")
+        const stakeResult = await stakerContract.stake({value: ethers.utils.parseEther("0.001")});
+        console.log('\t'," 🏷  stakeResult: ",stakeResult.hash)
 
-    describe("Ownership", function () {
-      it("Should determine owner", async function () {
-        expect(await vendor.owner()).to.equal(deployer.address);
+        console.log('\t'," ⏳ Waiting for confirmation...")
+        const txResult =  await stakeResult.wait()
+        expect(txResult.status).to.equal(1);
+
+        const newBalance = await stakerContract.balances(owner.address)
+        console.log('\t'," 🔎 New balance: ", ethers.utils.formatEther(newBalance))
+        expect(newBalance).to.equal(startingBalance.add(ethers.utils.parseEther("0.001")));
+
       });
 
-      it("Transfer ownership", async function () {
-        await vendor.transferOwnership(owner.address);
-        expect(await vendor.owner()).to.equal(owner.address);
-        await expect(vendor.withdraw()).to.be.revertedWith(
-          "Ownable: caller is not the owner"
-        );
+
+      if(process.env.CONTRACT_ADDRESS){
+        console.log(" 🤷 since we will run this test on a live contract this is as far as the automated tests will go...")
+      }else{
+
+        it("If enough is staked and time has passed, you should be able to complete", async function () {
+
+          const timeLeft1 = await stakerContract.timeLeft()
+          console.log('\t',"⏱ There should be some time left: ",timeLeft1.toNumber())
+          expect(timeLeft1.toNumber()).to.greaterThan(0);
+
+
+          console.log('\t'," 🚀 Staking a full eth!")
+          const stakeResult = await stakerContract.stake({value: ethers.utils.parseEther("1")});
+          console.log('\t'," 🏷  stakeResult: ",stakeResult.hash)
+
+          console.log('\t'," ⌛️ fast forward time...")
+          await network.provider.send("evm_increaseTime", [3600])
+          await network.provider.send("evm_mine")
+
+          const timeLeft2 = await stakerContract.timeLeft()
+          console.log('\t',"⏱ Time should be up now: ",timeLeft2.toNumber())
+          expect(timeLeft2.toNumber()).to.equal(0);
+
+          console.log('\t'," 🎉 calling execute")
+          const execResult = await stakerContract.execute();
+          console.log('\t'," 🏷  execResult: ",execResult.hash)
+
+          const result = await exampleExternalContract.completed()
+          console.log('\t'," 🥁 complete: ",result)
+          expect(result).to.equal(true);
+
+        })
+      }
+
+
+      it("Should redeploy Staker, stake, not get enough, and withdraw", async function () {
+        const [ owner, secondAccount ] = await ethers.getSigners();
+
+        const ExampleExternalContract = await ethers.getContractFactory("ExampleExternalContract");
+        exampleExternalContract = await ExampleExternalContract.deploy();
+
+        const Staker = await ethers.getContractFactory("Staker");
+        stakerContract = await Staker.deploy(exampleExternalContract.address);
+
+        console.log('\t'," 🔨 Staking...")
+        const stakeResult = await stakerContract.stake({value: ethers.utils.parseEther("0.001")});
+        console.log('\t'," 🏷  stakeResult: ",stakeResult.hash)
+
+        console.log('\t'," ⏳ Waiting for confirmation...")
+        const txResult =  await stakeResult.wait()
+        expect(txResult.status).to.equal(1);
+
+        console.log('\t'," ⌛️ fast forward time...")
+        await network.provider.send("evm_increaseTime", [3600])
+        await network.provider.send("evm_mine")
+
+        console.log('\t'," 🎉 calling execute")
+        const execResult = await stakerContract.execute();
+        console.log('\t'," 🏷  execResult: ",execResult.hash)
+
+        const result = await exampleExternalContract.completed()
+        console.log('\t'," 🥁 complete should be false: ",result)
+        expect(result).to.equal(false);
+
+
+        const startingBalance = await ethers.provider.getBalance(secondAccount.address);
+        //console.log("startingBalance before withdraw", ethers.utils.formatEther(startingBalance))
+
+        console.log('\t'," 💵 calling withdraw")
+        const withdrawResult = await stakerContract.withdraw(secondAccount.address);
+        console.log('\t'," 🏷  withdrawResult: ",withdrawResult.hash)
+
+        const endingBalance = await ethers.provider.getBalance(secondAccount.address);
+        //console.log("endingBalance after withdraw", ethers.utils.formatEther(endingBalance))
+
+        expect(endingBalance).to.equal(startingBalance.add(ethers.utils.parseEther("0.001")));
+
+
       });
+
     });
-
-    describe("Withdrawal", async function () {
-      it("Withdraws eth from contract", async function () {
-        // 1 eth in contract balance
-        expect(await vendor.balance()).to.equal(parseEther("1"));
-        // inital 10,000 account balance
-        expect(await prov.getBalance(owner.address)).to.be.gte(
-          parseEther("10000")
-        );
-        // owner address own can withdraw eth
-        expect(await vendor.owner()).to.equal(owner.address); // addr is owner
-        await vendor.connect(owner).withdraw(); // owner withdraws eth
-
-        // vendor account eth is withdrawn
-        expect(await prov.getBalance(vendor.address)).to.be.equal(0);
-
-        balanceAfterWithdrawal = await prov.getBalance(owner.address);
-        // owner account balance increases by 1eth
-        expect(await prov.getBalance(owner.address)).to.equal(
-          balanceAfterWithdrawal.toString()
-        );
-      });
-    });
-  });
-
-  describe("Verify balances", function () {
-    it("Checks vendor balance", async () => {
-      expect(await token.balanceOf(vendor.address)).to.be.equal(
-        totalSupply - ethAmount * tokensPerEth
-      );
-      expect(await token.balanceOf(deployer.address)).to.be.equal(
-        ethAmount * tokensPerEth
-      );
-      startingBalance = await token.balanceOf(deployer.address);
-
-      const buyTokensResult = await vendor.connect(deployer).buyTokens({
-        value: parseEther("1"),
-      });
-      const newBalance = startingBalance.toNumber() + ethAmount * tokensPerEth;
-
-      expect(await token.balanceOf(deployer.address)).to.equal(newBalance);
-      console.log("\t", " 🏷  mint tx: ", buyTokensResult.hash);
-      console.log("\t", " ⏳ Waiting for confirmation...");
-      const txResult = await buyTokensResult.wait(0);
-      startingBalance = await token.balanceOf(deployer.address);
-      console.log(
-        "\t",
-        " 🔎 Checking new buyer balance: ",
-        startingBalance.toString()
-      );
-      const vendorBalance = await token.balanceOf(vendor.address);
-      console.log(
-        "\t",
-        " 🔎 Checking new vendor balance: ",
-        vendorBalance.toString()
-      );
-    });
-    it("Cannot exceed vendor token supply", async () => {
-      vendorBalance = await token.balanceOf(vendor.address);
-      const buyTokensResult = await vendor.connect(deployer).buyTokens({
-        value: parseEther("98"),
-      });
-      vendorBalance = await token.balanceOf(vendor.address);
-      console.log(
-        "\t",
-        " 🔎 Checking new vendor balance: ",
-        vendorBalance.toString()
-      );
-
-      await expect(
-        vendor.connect(deployer).buyTokens({ value: parseEther("901") })
-      ).to.be.revertedWith("Exceeds vendor token balance");
-    });
-  });
-
-  describe("Approvals", function () {
-    it("Requires vendor approval", async () => {
-      await expect(vendor.sellTokens(sellAmount)).to.be.revertedWith(
-        "ERC20: transfer amount exceeds allowance"
-      );
-      await token.connect(deployer).approve(vendor.address, 1000);
-      deployerEthBal = await prov.getBalance(deployer.address);
-      vendorEthBal = await prov.getBalance(vendor.address);
-      deployerTokenBal = await token.balanceOf(deployer.address);
-      vendorTokenBal = await token.balanceOf(vendor.address);
-      console.log(
-        "\t",
-        " 🔎 Checking deployer eth balance: ",
-        formatEther(deployerEthBal),
-        "eth"
-      );
-      console.log(
-        "\t",
-        " 🔎 Checking deployer Token balance: ",
-        deployerTokenBal.toString(),
-        "TKN"
-      );
-
-      console.log(
-        "\t",
-        " 🔎 Checking vendor eth balance: ",
-        formatEther(vendorEthBal),
-        "eth"
-      );
-      console.log(
-        "\t",
-        " 🔎 Checking vendor Token balance: ",
-        vendorTokenBal.toString(),
-        "TKN"
-      );
-    });
-    it("sells to approved contract", async () => {
-      // Sell single token to vendor
-      const sellTokensResult = await vendor.sellTokens(sellAmount);
-
-      // vendor Token balance increases
-      expect(await token.balanceOf(vendor.address)).to.be.gt(vendorTokenBal);
-      // deployer Token balance decreases
-      expect(await token.balanceOf(deployer.address)).to.be.equal(
-        deployerTokenBal - sellAmount
-      );
-      // vendor eth balance has decreased by 1 eth
-      expect(await prov.getBalance(vendor.address)).to.be.lt(vendorEthBal);
-      // deployer eth balance has increased by ~ 1 eth
-      expect(await prov.getBalance(deployer.address)).to.be.gt(deployerEthBal);
-    });
-  });
+  });*/
 });

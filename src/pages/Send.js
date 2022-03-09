@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useEtherBalance, useEthers, useContractFunction } from "@usedapp/core";
-import { parseEther } from "ethers/lib/utils";
+import { useEtherBalance, useEthers } from "@usedapp/core";
+import { formatEther } from "@ethersproject/units";
 import { Contract } from "@ethersproject/contracts";
+
 import {
   Stack,
   Text,
@@ -27,7 +28,8 @@ import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { formatBalance, formatUSD } from "../helpers.js";
 
 import { useTokenBalanceCall, useContractMethod } from "../hooks";
-import { type } from "@testing-library/user-event/dist/type";
+
+const { ethers } = require("ethers");
 
 const Send = () => {
   let token, vendor, networkId;
@@ -43,6 +45,7 @@ const Send = () => {
     console.log("error reading contracts", e);
   }
 
+  const tokensPerEth = 100;
   // Hooks
   const balance = useEtherBalance(account);
   const vendorEthBalance = useEtherBalance(vendor.address);
@@ -56,15 +59,38 @@ const Send = () => {
   const [ethValue, setEthValue] = useState("");
   const [transactionType, setTransactionType] = useState("");
 
+  const [tokenBuyAmount, setTokenBuyAmount] = useState({
+    valid: true,
+    value: "",
+  });
+
+  const [tokenSellAmount, setTokenSellAmount] = useState({
+    valid: true,
+    value: "",
+  });
+
+  const ethCostToPurchaseTokens =
+    tokenBuyAmount.valid &&
+    tokensPerEth &&
+    ethers.utils.parseEther(
+      "" + tokenBuyAmount.value / parseFloat(tokensPerEth)
+    );
+
+  const ethValueToSellTokens =
+    tokenSellAmount.valid &&
+    tokensPerEth &&
+    ethers.utils.parseEther("" + tokenSellAmount.value);
+
   const { state: setBuyState, send: buyTokens } =
     useContractMethod("buyTokens");
   const { state: setSellState, send: sellTokens } =
     useContractMethod("sellTokens");
 
   const handleBuyTokens = (amount) => {
+    console.log("amount", amount);
     setDisabled(true);
     transactionType === "Buy"
-      ? buyTokens({ value: parseEther(amount) })
+      ? buyTokens({ value: amount })
       : sellTokens(amount);
   };
   useEffect(() => {
@@ -80,9 +106,14 @@ const Send = () => {
     setEthValue("");
   }, [transactionType]);
 
-  const handle = (e) => {
-    const re = /^[0-9\b]+$/;
+  useEffect(() => {
+    console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
+    console.log("ethValueToSellTokens", ethValueToSellTokens);
+  }, [ethCostToPurchaseTokens, ethValueToSellTokens]);
 
+  const handle = (e) => {
+    const re = /^\d+(\.\d{0,2})?$/;
+    let value = e.target.value;
     // if value is not blank, then test the regex
 
     if (e.target.value === "" || re.test(e.target.value)) {
@@ -105,7 +136,6 @@ const Send = () => {
 
   const purchaseType = (childData) => {
     setTransactionType(childData);
-    console.log("parent", childData);
   };
 
   return (
@@ -120,21 +150,27 @@ const Send = () => {
               <Stack isInline spacing={1}>
                 <Text>TKN Balance</Text>
                 {accountTokenBalance && (
-                  <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
+                  <Text textStyle="h5">
+                    {formatBalance(accountTokenBalance.toString())}
+                  </Text>
                 )}
               </Stack>
               <Stack isInline spacing={1}>
                 <Text>Ether balance</Text>
 
                 {balance && (
-                  <Text textStyle="h5">{formatBalance(balance)}</Text>
+                  <Text textStyle="h5">
+                    {formatBalance(balance.toString())}
+                  </Text>
                 )}
                 <Text>eth</Text>
                 <Spacer></Spacer>
                 <Text>Vendor TKN balance</Text>
 
                 {vendorTokenBalance && (
-                  <Text textStyle="h5">{vendorTokenBalance.toString()}</Text>
+                  <Text textStyle="h5">
+                    {formatBalance(vendorTokenBalance.toString())}
+                  </Text>
                 )}
                 <Text></Text>
               </Stack>
@@ -145,12 +181,27 @@ const Send = () => {
               <TransactionType purchaseType={purchaseType}></TransactionType>
               <InputGroup size="md" ml="65" mt="5">
                 <Input
-                  value={amount}
-                  onChange={(e) => handle(e)}
+                  value={
+                    transactionType == "Buy"
+                      ? tokenBuyAmount.value
+                      : tokenSellAmount.value
+                  }
+                  onChange={(e) => {
+                    const newValue = e.target.value.startsWith(".")
+                      ? "0."
+                      : e.target.value;
+                    const buyAmount = {
+                      value: newValue,
+                      valid: /^\d*\.?\d+$/.test(newValue),
+                    };
+                    transactionType == "Buy"
+                      ? setTokenBuyAmount(buyAmount)
+                      : setTokenSellAmount(buyAmount);
+                  }}
                   disabled={disabled}
                   fontSize={13}
                   focusBorderColor="blue"
-                  width={35}
+                  width={45}
                   pr="0.5rem"
                   type={"text"}
                   placeholder="eth"
@@ -173,7 +224,13 @@ const Send = () => {
                     focusBorderColor="blue"
                     fontSize={11}
                     size="sm"
-                    onClick={(e) => handleBuyTokens(amount)}
+                    onClick={(e) =>
+                      handleBuyTokens(
+                        transactionType == "Buy"
+                          ? ethCostToPurchaseTokens
+                          : ethValueToSellTokens
+                      )
+                    }
                     variant="outline"
                   >
                     Confirm {transactionType}

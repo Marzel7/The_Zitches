@@ -2,10 +2,8 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract Token is ERC20("ERC20", "TOK") {
-    uint256 private _totalSupply = 1000;
-
-    constructor() {
-        _mint(msg.sender, _totalSupply);
+contract Token is ERC20 {
+    constructor() ERC20("ERC20", "TOK") {
+        _mint(msg.sender, 2000 * 10**18);
     }
 }

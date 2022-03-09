@@ -5,7 +5,7 @@
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 const fs = require("fs");
-//var sleep = require("sleep");
+const { ethers } = hre;
 const { network } = require("hardhat");
 
 let token, vendor;
@@ -21,12 +21,12 @@ async function main() {
   const Vendor = await ethers.getContractFactory("Vendor");
   vendor = await Vendor.deploy(token.address);
   // Approve vendor to sell users tokens
-  await token.approve(vendor.address, 1000);
+  await token.approve(vendor.address, ethers.utils.parseEther("2000"));
 
   console.log("Token deployed to:", token.address);
   console.log("Vendor deployed to:", vendor.address);
 
-  await token.transfer(vendor.address, 1000);
+  await token.transfer(vendor.address, ethers.utils.parseEther("1000"));
   const balance = await token.balanceOf(vendor.address);
   console.log("vendor token balance - ", balance);
 

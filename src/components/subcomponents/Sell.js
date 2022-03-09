@@ -40,10 +40,10 @@ export default function Sell() {
   return (
     <Box w="600px" ml="300px">
       <Stack isInline spacing={1}>
-        {/* <Text textStyle="h4">Contract Balance</Text> */}
-        {/* {contractEthBalance && (
+        <Text textStyle="h4">Contract Balance</Text>
+        {contractEthBalance && (
           <Text textStyle="h5">{formatEther(contractEthBalance)} eth</Text>
-        )} */}
+        )}
       </Stack>
       <Stack>
         <Box width={100} px={3} py={10} textStyle="h5">

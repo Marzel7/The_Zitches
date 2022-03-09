@@ -36,11 +36,13 @@ export default function Search() {
         <Stack isInline spacing={1}>
           <Text textStyle="h4">TKN Balance</Text>
           {accountTokenBalance && (
-            <Text textStyle="h5">{accountTokenBalance.toString()}</Text>
+            <Text textStyle="h5">
+              {formatBalance(accountTokenBalance.toString())}
+            </Text>
           )}
         </Stack>
         <Stack>
-          <Box width={420} px={1} py={2} textStyle="h5">
+          <Box width={420} px={1} py={1} textStyle="h5">
             <InputGroup size="md">
               <Input
                 value={ethAddress}
