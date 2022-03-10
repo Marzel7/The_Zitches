@@ -45,7 +45,7 @@ const Send = () => {
     console.log("error reading contracts", e);
   }
 
-  const tokensPerEth = 100;
+  const tokensPerEth = 1;
   // Hooks
   const balance = useEtherBalance(account);
   const vendorEthBalance = useEtherBalance(vendor.address);
@@ -79,7 +79,9 @@ const Send = () => {
   const ethValueToSellTokens =
     tokenSellAmount.valid &&
     tokensPerEth &&
-    ethers.utils.parseEther("" + tokenSellAmount.value);
+    ethers.utils.parseEther(
+      "" + tokenSellAmount.value * parseFloat(tokensPerEth)
+    );
 
   const { state: setBuyState, send: buyTokens } =
     useContractMethod("buyTokens");
@@ -87,7 +89,6 @@ const Send = () => {
     useContractMethod("sellTokens");
 
   const handleBuyTokens = (amount) => {
-    console.log("amount", amount);
     setDisabled(true);
     transactionType === "Buy"
       ? buyTokens({ value: amount })
@@ -106,31 +107,37 @@ const Send = () => {
     setEthValue("");
   }, [transactionType]);
 
-  useEffect(() => {
-    console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
-    console.log("ethValueToSellTokens", ethValueToSellTokens);
-  }, [ethCostToPurchaseTokens, ethValueToSellTokens]);
-
-  const handle = (e) => {
+  const handleTokenAmount = (e) => {
     const re = /^\d+(\.\d{0,2})?$/;
+
     let value = e.target.value;
     // if value is not blank, then test the regex
 
     if (e.target.value === "" || re.test(e.target.value)) {
       if (
-        Number(e.target.value) <= Number(vendorTokenBalance) &&
+        Number(e.target.value) <= formatEther(vendorTokenBalance.toString()) &&
         transactionType === "Buy"
       ) {
         setAmount(e.target.value);
         setEthValue("$" + formatUSD(e.target.value * etherPrice));
       }
       if (
-        Number(e.target.value) <= Number(accountTokenBalance) &&
+        Number(e.target.value) <= formatEther(accountTokenBalance.toString()) &&
         transactionType === "Sell"
       ) {
         setAmount(e.target.value);
         setEthValue("$" + formatUSD(e.target.value * etherPrice));
       }
+
+      const newValue = e.target.value.startsWith(".") ? "0." : e.target.value;
+      const buyAmount = {
+        value: newValue,
+        valid: /^\d*\.?\d+$/.test(newValue),
+      };
+
+      transactionType == "Buy"
+        ? setTokenBuyAmount(buyAmount)
+        : setTokenSellAmount(buyAmount);
     }
   };
 
@@ -176,53 +183,40 @@ const Send = () => {
               </Stack>
             </Stack>
           </Box>
-          <Stack py={7} px={300}>
-            <Box width={250} px={1} textStyle="h5">
+          <Stack py={7} px={250}>
+            <Box width={280} px={1} textStyle="h5">
               <TransactionType purchaseType={purchaseType}></TransactionType>
-              <InputGroup size="md" ml="65" mt="5">
+              <InputGroup ml="65" mt="5">
                 <Input
-                  value={
-                    transactionType == "Buy"
-                      ? tokenBuyAmount.value
-                      : tokenSellAmount.value
-                  }
-                  onChange={(e) => {
-                    const newValue = e.target.value.startsWith(".")
-                      ? "0."
-                      : e.target.value;
-                    const buyAmount = {
-                      value: newValue,
-                      valid: /^\d*\.?\d+$/.test(newValue),
-                    };
-                    transactionType == "Buy"
-                      ? setTokenBuyAmount(buyAmount)
-                      : setTokenSellAmount(buyAmount);
-                  }}
+                  value={amount}
+                  onChange={(e) => handleTokenAmount(e)}
                   disabled={disabled}
-                  fontSize={13}
+                  fontSize={14}
                   focusBorderColor="blue"
-                  width={45}
+                  width={75}
                   pr="0.5rem"
                   type={"text"}
-                  placeholder="eth"
+                  placeholder="TKN"
                   variant="unstyled"
                   text-align="right"
                 />
 
                 <Input
                   value={ethValue}
-                  // onChange={(e) => setEthValue(e.currentTarget.value)}
-                  fontSize={13}
+                  fontSize={14}
+                  width={300}
                   focusBorderColor="blue"
                   pr="0.5rem"
                   placeholder="usd"
                   variant="outline"
                 />
-                <InputRightElement width="6.5rem">
+                <InputRightElement width="6.0 rem">
                   <Button
                     variant="outline"
                     focusBorderColor="blue"
+                    disabled={disabled}
                     fontSize={11}
+                    mr={2}
                     size="sm"
                     onClick={(e) =>
                       handleBuyTokens(

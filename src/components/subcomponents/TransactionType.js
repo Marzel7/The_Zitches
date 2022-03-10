@@ -23,7 +23,7 @@ export default function TransactionType({ purchaseType }) {
   return (
     <>
       <Tabs>
-        <ButtonGroup ml={200}>
+        <ButtonGroup ml={230}>
           {types.map((type) => (
             <Button
               key={type}
