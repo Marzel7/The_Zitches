@@ -12,7 +12,7 @@ export default function Nav() {
           <Link to="/block">Block</Link> */}
 
         {/* <Link to="/transactions">Transactions</Link> */}
-        <Stack align="baseline" px={1400}>
+        <Stack align="baseline" px={1250}>
           <AccountButton />
         </Stack>
         {/* </Stack> */}

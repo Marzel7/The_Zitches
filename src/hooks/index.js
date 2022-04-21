@@ -12,9 +12,17 @@ import adrs from "../contracts/contract-address.json";
 
 // Vendor contract
 const vendorContract = new Contract(adrs.vendorAddr, VendorContract.abi);
+const tokenContract = new Contract(adrs.tokenAddr, TokenContract.abi);
 
 export function useContractMethod(methodName) {
   const { state, send } = useContractFunction(vendorContract, methodName, {
+    transactionName: methodName,
+  });
+  return { state, send };
+}
+
+export function useTokenContractMethod(methodName) {
+  const { state, send } = useContractFunction(tokenContract, methodName, {
     transactionName: methodName,
   });
   return { state, send };
@@ -30,6 +38,18 @@ export const useTokenBalanceCall = (address) => {
     }
   );
   return tokenBalance;
+};
+
+export const useTokenAllowanceCall = (address, amount) => {
+  const tokenAllowance = useContractCall(
+    address && {
+      abi: new ethers.utils.Interface(TokenContract.abi),
+      address: adrs.tokenAddr,
+      method: "allowance",
+      args: [address, amount],
+    }
+  );
+  return tokenAllowance;
 };
 
 export const useTimeLeftCall = () => {

@@ -58,7 +58,7 @@ export default function History() {
                 {transaction.transaction.from.substring(36)}
               </Td>
             )}
-            {transaction.receipt.logs && (
+            {transaction.receipt.logs[0].data.toString() && (
               <Td color="gray.500">
                 {formatBalance(transaction.receipt.logs[0].data.toString(), 16)}
               </Td>
@@ -87,7 +87,7 @@ export default function History() {
             <Th></Th>
           </Tr>
         </Thead>
-        <Tbody>{renderRow()}</Tbody>
+        <Tbody>{notificationHistory != null ? renderRow() : ""}</Tbody>
         <Tfoot></Tfoot>
       </Table>
     </Box>

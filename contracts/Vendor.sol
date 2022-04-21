@@ -26,7 +26,7 @@ contract Vendor is Ownable {
 
     function sellTokens(uint256 _amount) external payable {
         uint256 allowance = token.allowance(msg.sender, address(this));
-        require(allowance >= _amount, "You don't have the enough allowance");
+        require(allowance >= _amount, "You don't have enough allowance");
 
         bool tokenSuccess = token.transferFrom(
             msg.sender,

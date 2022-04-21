@@ -55,7 +55,6 @@ export default function Sell() {
                 size="sm"
                 fontSize={11}
                 onClick={(e) => handleSellBtn()}
-                variant="outline"
               >
                 Sell
               </Button>

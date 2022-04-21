@@ -27,7 +27,12 @@ import VendorContract from "../contracts/abis/Vendor.json";
 import { useCoingeckoPrice } from "@usedapp/coingecko";
 import { formatBalance, formatUSD } from "../helpers.js";
 
-import { useTokenBalanceCall, useContractMethod } from "../hooks";
+import {
+  useTokenBalanceCall,
+  useContractMethod,
+  useTokenContractMethod,
+  useTokenAllowanceCall,
+} from "../hooks";
 
 const { ethers } = require("ethers");
 
@@ -53,6 +58,9 @@ const Send = () => {
   // Vendor hooks
   const vendorTokenBalance = useTokenBalanceCall(adrs.vendorAddr);
   const accountTokenBalance = useTokenBalanceCall(account);
+  let allowance = useTokenAllowanceCall(account, vendor.address);
+
+  console.log("allowance", allowance);
 
   const [amount, setAmount] = useState("0");
   const [disabled, setDisabled] = useState(false);
@@ -87,20 +95,30 @@ const Send = () => {
     useContractMethod("buyTokens");
   const { state: setSellState, send: sellTokens } =
     useContractMethod("sellTokens");
+  const { state: setApproveState, send: approveTokens } =
+    useTokenContractMethod("approve");
 
   const handleBuyTokens = (amount) => {
     setDisabled(true);
-    transactionType === "Buy"
-      ? buyTokens({ value: amount })
-      : sellTokens(amount);
+    if (transactionType === "Buy") {
+      buyTokens({ value: amount });
+    } else {
+      allowance >= amount
+        ? sellTokens(amount)
+        : approveTokens(vendor.address, amount);
+    }
   };
+
   useEffect(() => {
-    if ((setBuyState.status || setSellState.status) != "Mining") {
+    if (
+      (setBuyState.status || setSellState.status || setApproveState.status) !=
+      "Mining"
+    ) {
       setDisabled(false);
       setAmount("");
       setEthValue("");
     }
-  }, [setBuyState, setSellState]);
+  }, [setBuyState, setSellState, setApproveState]);
 
   useEffect(() => {
     setAmount("");
@@ -225,7 +243,6 @@ const Send = () => {
                           : ethValueToSellTokens
                       )
                     }
-                    variant="outline"
                   >
                     Confirm {transactionType}
                   </Button>

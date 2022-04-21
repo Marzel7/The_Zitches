@@ -5,6 +5,7 @@
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 const fs = require("fs");
+var sleep = require("sleep");
 const { ethers } = hre;
 const { network } = require("hardhat");
 
@@ -21,7 +22,7 @@ async function main() {
   const Vendor = await ethers.getContractFactory("Vendor");
   vendor = await Vendor.deploy(token.address);
   // Approve vendor to sell users tokens
-  await token.approve(vendor.address, ethers.utils.parseEther("2000"));
+  //await token.approve(vendor.address, ethers.utils.parseEther("2000"));
 
   console.log("Token deployed to:", token.address);
   console.log("Vendor deployed to:", vendor.address);
@@ -39,10 +40,10 @@ async function main() {
   //npx hardhat clean will clear `ENOENT: no such file or directory` error
   if (network.name == "rinkeby") {
     //wait for 60 seconds before verify
-    //await sleep.sleep(90);
+    await sleep.sleep(60);
     await hre.run("verify:verify", {
-      address: token.address,
-      vendorAddress: vendor.address,
+      // address: token.address,
+      address: vendor.address,
       constructorArguments: [token.address],
     });
   }

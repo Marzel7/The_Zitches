@@ -4,7 +4,8 @@ import React, { useState } from "react";
 
 export default function TransactionType({ purchaseType }) {
   const types = ["Buy", "Sell"];
-  const [active, setActive] = useState("Sell");
+
+  const [active, setActive] = useState("Buy");
   const [disabledBuy, setDisableBuy] = useState(0);
   const [disabledSell, setDisableSell] = useState(1);
 
@@ -27,7 +28,7 @@ export default function TransactionType({ purchaseType }) {
           {types.map((type) => (
             <Button
               key={type}
-              // active={active === type}
+              active={active === type}
               onClick={() => handleWithdrawBtn(type)}
               variant={"empty"}
               size="sm"
