@@ -27,7 +27,7 @@ async function main() {
   console.log("Token deployed to:", token.address);
   console.log("Vendor deployed to:", vendor.address);
 
-  await token.transfer(vendor.address, ethers.utils.parseEther("1000"));
+  await token.transfer(vendor.address, ethers.utils.parseEther("2000"));
   const balance = await token.balanceOf(vendor.address);
   console.log("vendor token balance - ", balance);
 

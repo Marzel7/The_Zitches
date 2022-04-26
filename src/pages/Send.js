@@ -32,6 +32,7 @@ import {
   useContractMethod,
   useTokenContractMethod,
   useTokenAllowanceCall,
+  useTokenTotalSupply,
 } from "../hooks";
 
 const { ethers } = require("ethers");
@@ -59,13 +60,12 @@ const Send = () => {
   const vendorTokenBalance = useTokenBalanceCall(adrs.vendorAddr);
   const accountTokenBalance = useTokenBalanceCall(account);
   let allowance = useTokenAllowanceCall(account, vendor.address);
-
-  console.log("allowance", allowance);
+  const totalSupply = useTokenTotalSupply();
 
   const [amount, setAmount] = useState("0");
   const [disabled, setDisabled] = useState(false);
   const [ethValue, setEthValue] = useState("");
-  const [transactionType, setTransactionType] = useState("");
+  const [transactionType, setTransactionType] = useState("Buy");
 
   const [tokenBuyAmount, setTokenBuyAmount] = useState({
     valid: true,
@@ -100,12 +100,19 @@ const Send = () => {
 
   const handleBuyTokens = (amount) => {
     setDisabled(true);
+
+    let newAllowance = formatEther(allowance.toString());
+    console.log("newAllowance", Math.trunc(newAllowance));
+
+    let newAmount = formatEther(amount);
+    console.log("newAmount ", Math.trunc(newAmount));
+
     if (transactionType === "Buy") {
       buyTokens({ value: amount });
     } else {
-      allowance >= amount
+      Math.trunc(newAllowance) > Math.trunc(newAmount)
         ? sellTokens(amount)
-        : approveTokens(vendor.address, amount);
+        : approveTokens(vendor.address, ethers.utils.parseEther("2000"));
     }
   };
 
@@ -131,7 +138,7 @@ const Send = () => {
     let value = e.target.value;
     // if value is not blank, then test the regex
 
-    if (e.target.value === "" || re.test(e.target.value)) {
+    if (e.target.value == "" || re.test(e.target.value)) {
       if (
         Number(e.target.value) <= formatEther(vendorTokenBalance.toString()) &&
         transactionType === "Buy"
@@ -227,6 +234,7 @@ const Send = () => {
                   pr="0.5rem"
                   placeholder="usd"
                   variant="outline"
+                  onChange={(e) => console.log(e)}
                 />
                 <InputRightElement width="6.0 rem">
                   <Button

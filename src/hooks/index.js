@@ -52,6 +52,15 @@ export const useTokenAllowanceCall = (address, amount) => {
   return tokenAllowance;
 };
 
+export const useTokenTotalSupply = () => {
+  const totalSupply = useContractCall({
+    abi: new ethers.utils.Interface(TokenContract.abi),
+    address: adrs.tokenAddr,
+    method: "totalSupply",
+  });
+  return totalSupply;
+};
+
 export const useTimeLeftCall = () => {
   const timeLeft = useContractCall({
     abi: new ethers.utils.Interface(StakerContract.abi),
