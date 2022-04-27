@@ -105,14 +105,13 @@ const Send = () => {
     console.log("newAllowance", Math.trunc(newAllowance));
 
     let newAmount = formatEther(amount);
-    console.log("newAmount ", Math.trunc(newAmount));
 
     if (transactionType === "Buy") {
       buyTokens({ value: amount });
     } else {
       Math.trunc(newAllowance) > Math.trunc(newAmount)
         ? sellTokens(amount)
-        : approveTokens(vendor.address, ethers.utils.parseEther("2000"));
+        : approveTokens(vendor.address, totalSupply[0]);
     }
   };
 

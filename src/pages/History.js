@@ -23,12 +23,13 @@ export default function History() {
 
   useEffect(() => {
     notifications.map((notification) => {
+      console.log(notifications);
       if (
         notification.type === "transactionSucceed" &&
         (notification.transactionName == "buyTokens" ||
-          notification.transactionName == "sellTokens")
+          notification.transactionName == "sellTokens" ||
+          notification.transactionName == "approve")
       ) {
-        console.log(notification.transactionName);
         {
           setNotificationHistory(() => [notification, ...notificationHistory]);
         }
@@ -63,8 +64,11 @@ export default function History() {
                 {formatBalance(transaction.receipt.logs[0].data.toString(), 16)}
               </Td>
             )}
-            {transaction.transaction && (
+            {transaction.transactionName != "approve" && (
               <Td>{transaction.transactionName === "buyTokens" ? "+" : "-"}</Td>
+            )}
+            {transaction.transactionName == "approve" && (
+              <Td>{transaction.transactionName === "approve" ? "A" : "A"}</Td>
             )}
           </Tr>
         );
