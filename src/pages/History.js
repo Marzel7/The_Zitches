@@ -68,7 +68,11 @@ export default function History() {
               <Td>{transaction.transactionName === "buyTokens" ? "+" : "-"}</Td>
             )}
             {transaction.transactionName == "approve" && (
-              <Td>{transaction.transactionName === "approve" ? "A" : "A"}</Td>
+              <Td>
+                {transaction.transactionName === "approve"
+                  ? "Approval"
+                  : "Approval"}
+              </Td>
             )}
           </Tr>
         );

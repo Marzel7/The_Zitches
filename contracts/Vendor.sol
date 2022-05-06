@@ -36,7 +36,7 @@ contract Vendor is Ownable {
         require(tokenSuccess, "token transfer failed");
 
         uint256 backEth = _amount / tokensPerEth;
-        (bool ethSuccess, ) = msg.sender.call{value: backEth}("");
+        (bool ethSuccess, ) = msg.sender.call{value: amount}("");
         require(ethSuccess, "transfer eth back failed");
         emit SellTokens(msg.sender, backEth, _amount);
     }

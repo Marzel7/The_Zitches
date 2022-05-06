@@ -46,3 +46,6 @@ To deploy to Rinkeby, these are the steps:
 ```
 
 ```
+
+Working example deployed, you'll need to have your wallet connected to Metamask
+`https://rhetorical-cloud.surge.sh`
