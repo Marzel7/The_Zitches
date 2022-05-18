@@ -18,7 +18,7 @@ describe("exchange", async () => {
     const Token = await ethers.getContractFactory("Token");
     token = await Token.deploy("ZToken", "ZTK", totalSupply);
 
-    const Exchange = await ethers.getContractFactory("Exchange");
+    const Exchange = await ethers.getContractFactory("ExchangeA");
     exchange = await Exchange.deploy(token.address);
 
     await token.deployed();

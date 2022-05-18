@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "hardhat/console.sol";
 
-contract Exchange is ERC20 {
+contract ExchangeB is ERC20 {
     address public tokenAddress;
 
     constructor(address _token) ERC20("ZSwap-V1", "ZSP-V1") {

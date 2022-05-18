@@ -18,7 +18,7 @@ describe("exchange", async () => {
     const Token = await ethers.getContractFactory("Token");
     token = await Token.deploy("ZToken", "ZTK", totalSupply);
 
-    const Exchange = await ethers.getContractFactory("Exchange");
+    const Exchange = await ethers.getContractFactory("ExchangeB");
     exchange = await Exchange.deploy(token.address);
 
     await token.deployed();
@@ -99,7 +99,7 @@ describe("exchange", async () => {
 
         expect(
           fromWei(userEtherBalanceAfter.sub(userEtherBalanceBefore))
-        ).to.equal("24.999935397881584814"); // 25 - gas fees
+        ).to.equal("24.999935397882412836"); // 25 - gas fees
 
         expect(
           fromWei(userTokenBalanceAfter.sub(userTokenBalanceBefore))
@@ -120,7 +120,7 @@ describe("exchange", async () => {
 
         expect(
           fromWei(userEtherBalanceAfter.sub(userEtherBalanceBefore))
-        ).to.eq("99.999948657351680984");
+        ).to.eq("99.999948657352088632");
         expect(
           fromWei(userTokenBalanceAfter.sub(userTokenBalanceBefore))
         ).to.eq("200.0");
@@ -146,7 +146,7 @@ describe("exchange", async () => {
 
         expect(
           fromWei(userEtherBalanceAfter.sub(userEtherBalanceBefore))
-        ).to.eq("109.999948863863304248"); // 110 - gas fees
+        ).to.eq("109.999948863863559028"); // 110 - gas fees
 
         expect(
           fromWei(userTokenBalanceAfter.sub(userTokenBalanceBefore))
@@ -214,7 +214,7 @@ describe("exchange", async () => {
 
         const userBalanceAfter = await getBalance(user.address);
         expect(fromWei(userBalanceAfter.sub(userBalanceBefore))).to.eq(
-          "-1.000061344070321596"
+          "-1.000061344070260264"
         );
 
         const exchangeEthBalance = await getBalance(exchange.address);
@@ -306,32 +306,28 @@ describe("exchange", async () => {
       });
     });
 
-    describe("", async () => {
+    describe("zero swaps", async () => {
       beforeEach(async () => {
         await token.transfer(user.address, toWei(22));
-        await token.connect(user).approve(exchange.address, toWei(22));
-
         await token.approve(exchange.address, toWei(2000));
-        await exchange.addLiquidity(toWei(2000), { value: toWei(1000) });
+        await exchange.addLiquidity(toWei(100), { value: toWei(100) });
       });
 
       it("allows zero swaps", async () => {
         const userBalanceBefore = await getBalance(user.address);
         await exchange.connect(user).tokenToEthSwap(toWei(0), toWei(0));
-
         const userBalanceAfter = await getBalance(user.address);
         expect(fromWei(userBalanceAfter.sub(userBalanceBefore))).to.eq(
-          "-0.000000000044275"
+          "-0.000043950041313"
         );
-
         const userTokenBalance = await token.balanceOf(user.address);
         expect(fromWei(userTokenBalance)).to.equal("22.0");
 
         const exchangeEthBalance = await getBalance(exchange.address);
-        expect(fromWei(exchangeEthBalance)).to.equal("1000.0");
+        expect(fromWei(exchangeEthBalance)).to.equal("100.0");
 
         const exchangeTokenBalance = await token.balanceOf(exchange.address);
-        expect(fromWei(exchangeTokenBalance)).to.equal("2000.0");
+        expect(fromWei(exchangeTokenBalance)).to.equal("100.0");
       });
     });
   });
