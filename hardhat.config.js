@@ -1,8 +1,8 @@
 require("@nomiclabs/hardhat-waffle");
 //require("hardhat-typechain");
 require("@nomiclabs/hardhat-web3");
-//require("@nomiclabs/hardhat-etherscan")
-//require("dotenv").config();
+require("@nomiclabs/hardhat-etherscan");
+require("dotenv").config();
 
 // help//
 
@@ -10,7 +10,7 @@ require("@nomiclabs/hardhat-web3");
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "localhost",
+  defaultNetwork: "hardhat",
 
   paths: {
     artifacts: "./src/artifacts",
@@ -23,11 +23,16 @@ module.exports = {
     hardhat: {
       chainId: 1337,
     },
-    // rinkeby: {
-    //     url: process.env.RINKEBY_RPC_URL,
-    //     accounts: [process.env.PRIVATE_KEYS],
-    //     saveDeployments: true,
-    // },
+    rinkeby: {
+      url: process.env.RINKEBY_RPC_URL,
+      accounts: [process.env.PRIVATE_KEYS],
+      saveDeployments: true,
+    },
+    rinkeby_alchemy: {
+      url: process.env.ALCHEMY_RPC_URL,
+      accounts: [process.env.PRIVATE_KEYS],
+      saveDeployments: true,
+    },
   },
   solidity: {
     compilers: [
@@ -35,13 +40,13 @@ module.exports = {
         version: "0.6.2",
       },
       {
-        version: "0.8.0",
+        version: "0.8.4",
       },
     ],
   },
-  //   etherscan: {
-  //     // Your API key for Etherscan
-  //     // Obtain one at https://etherscan.io/
-  //     apiKey: process.env.ETHERSCAN_API
-  // },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: process.env.ETHERSCAN_API,
+  },
 };

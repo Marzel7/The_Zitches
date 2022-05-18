@@ -8,26 +8,30 @@ const fs = require("fs");
 var sleep = require("sleep");
 const { network } = require("hardhat");
 
-let propstoreFactory;
+let propstoreFactory, token, exchange;
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
 
   console.log("Deploying contracts with the account:", deployer.address);
 
-  const PropStoreFactory = await ethers.getContractFactory("PropStoreFactory");
-  propstoreFactory = await PropStoreFactory.deploy();
+  const ExchangeFactory = await ethers.getContractFactory("Exchange");
+  exchange = await ExchangeFactory.deploy();
 
-  console.log("propstoreFactory deployed to:", propstoreFactory.address);
+  const Token = await ethers.getContractFactory("Token");
+  token = await Token.deploy("ZToken", "ZTK", 10000);
+
+  console.log("token deployed to:", token.address);
+  console.log("exchange deployed to:", exchange.address);
   saveFrontendFiles();
   // verify contracts
 
   //npx hardhat clean will clear `ENOENT: no such file or directory` error
-  if (network.name == "rinkeby") {
+  if (network.name == "rinkeby_alchemy") {
     //wait for 60 seconds before verify
-    await sleep.sleep(60);
+    await sleep.sleep(30);
     await hre.run("verify:verify", {
-      propstoreFactoryAddress: propstoreFactory.address,
+      address: exchange.address,
       constructorArguments: [],
     });
   }
@@ -45,19 +49,18 @@ function saveFrontendFiles() {
     contractsDir + "/contract-address.json",
     JSON.stringify(
       {
-        propstoreFactoryAddress: propstoreFactory.address,
+        exchangeFactory: exchangeFactory.address,
       },
       undefined,
       2
     )
   );
 
-  const PropstoreFactoryArtifacts =
-    artifacts.readArtifactSync("PropStoreFactory");
+  const ExchangeFactoryArtifacts = artifacts.readArtifactSync("Exchange");
 
   fs.writeFileSync(
-    contractsDir + "/abis/PropstoreFactoryArtifacts.json",
-    JSON.stringify(PropstoreFactoryArtifacts, null, 2)
+    contractsDir + "/abis/ExchangeFactoryArtifacts.json",
+    JSON.stringify(ExchangeFactoryArtifacts, null, 2)
   );
 }
 
