@@ -74,11 +74,19 @@ describe("DEX", function () {
           let tokenBalance = await balloonsContract.balanceOf(
             dexContract.address
           );
+          let deployerLiquidityBalance = await dexContract.getLiquidity(
+            deployer.address
+          );
+          let user2LiquidityBalance = await dexContract.getLiquidity(
+            user2.address
+          );
           console.log("*** ETH / BAL ***");
           return [
             fromWei(ethBalance),
             fromWei(tokenBalance),
             fromWei(ethBalance) / fromWei(tokenBalance),
+            fromWei(deployerLiquidityBalance),
+            fromWei(user2LiquidityBalance),
           ];
         };
       });
@@ -208,9 +216,11 @@ describe("DEX", function () {
       expect(await balloonsContract.balanceOf(user2.address)).to.eq(toWei(500));
     });
   });
-  describe("active liquidity pools", async () => {
+  describe("multi-provider liquidity pools", async () => {
     it("inits pools at 2:1 ratio", async () => {
-      await dexContract.init(toWei(10), { value: toWei(5) });
+      await dexContract
+        .connect(deployer.signer)
+        .init(toWei(10), { value: toWei(5) });
       console.log(await balances());
     });
     it("adds liquidity balanced to 2:1", async () => {
@@ -220,12 +230,41 @@ describe("DEX", function () {
       expect(await getBalance(dexContract.address)).to.eq(toWei(55));
     });
     it("withdraws liquidity with accrued fees", async () => {
-      console.log(await balances());
-      await dexContract.ethToToken({ value: toWei(10) });
-      console.log(await balances());
-      let tx1 = await dexContract.connect(user2.signer).withdraw(toWei(50));
+      const withdrawAmount = 10;
+      await dexContract.connect(user2.signer).ethToToken({ value: toWei(10) });
+      console.log("balance before withdrawal", await balances());
+
+      /// Calculate liquidity withdrawl allocation
+      const ethReserve = await getBalance(dexContract.address);
+      const totalLiquidityBal = await dexContract.totalLiquidity();
+
+      const liquidityAmountWithdrawn =
+        (ethReserve * withdrawAmount) / totalLiquidityBal;
+
+      /// Calculate token withdrawl allocation
+      const tokenReserve = await balloonsContract.balanceOf(
+        dexContract.address
+      );
+      const tokenAmountWithdrawn =
+        (tokenReserve * withdrawAmount) / totalLiquidityBal;
+
+      let tx1 = await dexContract
+        .connect(user2.signer)
+        .withdraw(toWei(withdrawAmount));
       let rc = await tx1.wait();
       let event = rc.events.find((event) => event.event === "LiquidityRemoved");
+
+      // console.log("**************");
+      // console.log("requested liquidity withdrawn - ", withdrawAmount, "eth");
+      // console.log(
+      //   "actual liquidity withdrawn",
+      //   liquidityAmountWithdrawn,
+      //   "eth"
+      // );
+      // console.log("**************");
+      // console.log("withdrawn token amount", tokenAmountWithdrawn);
+      // console.log("balance after withdrawal", await balances());
+
       const [
         liquidityProvider,
         ethOutput,
@@ -234,12 +273,15 @@ describe("DEX", function () {
         liquidityWithdrawn,
         totalLiquidity,
       ] = event.args;
+
       expect(liquidityProvider).to.eq(user2.address);
-      //expect(ethOutput).to.eq(toWei(50));
-      //expect(tokenOutput).to.eq(toWei(0));
-      //expect(newLiquidityPosition).to.eq(0);
-      expect(liquidityWithdrawn).to.eq(toWei(50));
-      expect(totalLiquidity).to.eq(toWei(5));
+      expect(Number(fromWei(ethOutput))).to.eq(liquidityAmountWithdrawn);
+      expect(Number(fromWei(tokenOutput))).to.eq(tokenAmountWithdrawn);
+      expect(newLiquidityPosition).to.eq(toWei(40));
+      expect(Number(fromWei(liquidityWithdrawn))).to.eq(
+        liquidityAmountWithdrawn
+      );
+      expect(totalLiquidity).to.eq(toWei(45));
     });
   });
 });
