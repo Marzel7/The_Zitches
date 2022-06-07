@@ -162,7 +162,6 @@ contract DEX {
     function deposit() public payable returns (uint256 tokensDeposited) {
         uint256 tokenReserves = tokenReserve();
         uint256 ethReserve = address(this).balance.sub(msg.value);
-
         uint256 tokenDeposit = msg.value.mul(tokenReserves) / ethReserve;
         uint256 liquidityMinted = msg.value.mul(totalLiquidity) / ethReserve;
         liquidity[msg.sender] = liquidity[msg.sender].add(liquidityMinted);
