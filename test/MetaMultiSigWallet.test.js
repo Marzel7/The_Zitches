@@ -1,5 +1,5 @@
-const { ethers } = require("hardhat");
-const { expect } = require("chai");
+const {ethers} = require("hardhat");
+const {expect} = require("chai");
 
 describe("MetaMultiSigWallet Test", () => {
   let metaMultiSigWallet;
@@ -17,11 +17,8 @@ describe("MetaMultiSigWallet Test", () => {
   let monyo; // ERC20 Token
   const MONYO_TOKEN_TOTAL_SUPPLY = "100";
 
-  const toWei = (value) => ethers.utils.parseEther(value.toString());
-  const fromWei = (value) =>
-    ethers.utils.formatEther(
-      typeof value === "string" ? value : value.toString()
-    );
+  const toWei = value => ethers.utils.parseEther(value.toString());
+  const fromWei = value => ethers.utils.formatEther(typeof value === "string" ? value : value.toString());
 
   const getBalance = ethers.provider.getBalance;
 
@@ -31,14 +28,8 @@ describe("MetaMultiSigWallet Test", () => {
   beforeEach(async function () {
     [owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners();
 
-    let metaMultiSigWalletFactory = await ethers.getContractFactory(
-      "MetaMultiSigWallet"
-    );
-    metaMultiSigWallet = await metaMultiSigWalletFactory.deploy(
-      CHAIN_ID,
-      [owner.address],
-      signatureRequired
-    );
+    let metaMultiSigWalletFactory = await ethers.getContractFactory("MetaMultiSigWallet");
+    metaMultiSigWallet = await metaMultiSigWalletFactory.deploy(CHAIN_ID, [owner.address], signatureRequired);
 
     await owner.sendTransaction({
       to: metaMultiSigWallet.address,
@@ -59,9 +50,34 @@ describe("MetaMultiSigWallet Test", () => {
     });
 
     it("Mutli sig wallet shoujld own all the Mono token", async () => {
-      expect(await monyo.balanceOf(metaMultiSigWallet.address)).to.eq(
-        toWei(MONYO_TOKEN_TOTAL_SUPPLY)
-      );
+      expect(await monyo.balanceOf(metaMultiSigWallet.address)).to.eq(toWei(MONYO_TOKEN_TOTAL_SUPPLY));
+    });
+    it("confirms contract balance", async () => {
+      expect(await getBalance(metaMultiSigWallet.address)).to.eq(toWei(1));
+    });
+  });
+  describe("Testing MetaMultiDigWallet", async () => {
+    it("Adds a new signer", async () => {
+      let newSigner = addr2.address;
+
+      let nonce = await metaMultiSigWallet.nonce();
+
+      let to = metaMultiSigWallet.address;
+      let value = 0;
+
+      // Returns the encoded data, which can be used as the data for a transaction for fragment
+      //(see Specifying Fragments) for the given values.
+      let callData = metaMultiSigWallet.interface.encodeFunctionData("addSigner", [newSigner, 1]);
+
+      // Get transaction hash
+      let hash = await metaMultiSigWallet.getTransactionHash(nonce, to, value, callData);
+
+      const signature = await owner.provider.send("personal_sign", [hash, owner.address]);
+
+      // Double check if owner address is recovered properly, executeTransaction would fail anyways
+      expect(await metaMultiSigWallet.recover(hash, signature)).to.eq(owner.address);
+      await metaMultiSigWallet.executeTransaction(metaMultiSigWallet.address, value, callData, [signature]);
+      expect(await metaMultiSigWallet.isOwner(newSigner)).to.equal(true);
     });
   });
 });

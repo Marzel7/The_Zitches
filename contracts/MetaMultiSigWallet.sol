@@ -120,10 +120,11 @@ contract MetaMultiSigWallet {
             "executeTransaction: only owners can execute"
         );
         bytes32 _hash = getTransactionHash(nonce, to, value, data);
+
         nonce++;
         uint256 validSignatures;
         address duplicateGuard;
-        for (uint256 i = 0; i <= signatures.length; i++) {
+        for (uint256 i = 0; i < signatures.length; i++) {
             address recovered = recover(_hash, signatures[i]);
             require(
                 recovered > duplicateGuard,
