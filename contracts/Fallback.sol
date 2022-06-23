@@ -17,8 +17,24 @@ contract Fallback {
 }
 
 contract CallFallback {
-    function payContract(address receiver) public payable {
-        (bool success, ) = receiver.call{value: msg.value}("");
-        require(success, "TX failed");
+    function functionSelector(string calldata func)
+        external
+        pure
+        returns (bytes4)
+    {
+        return bytes4(keccak256(bytes(func)));
+    }
+
+    function payContract(address _addr, bytes memory _data)
+        public
+        payable
+        returns (bool, bytes memory)
+    {
+        (bool success, bytes memory result) = _addr.call{value: msg.value}(
+            _data
+        );
+
+        require(success, "call: revert");
+        return (success, result);
     }
 }

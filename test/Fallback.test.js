@@ -9,6 +9,11 @@ const fromWei = value => ethers.utils.formatEther(typeof value === "string" ? va
 
 const getBalance = ethers.provider.getBalance;
 
+const removeFunctionParameters = data => {
+  let returnedData = data.slice(0, 10);
+  return returnedData;
+};
+
 /**
  * @notice
  * Stages of testing are as follows: set up global test variables, test contract deployment,
@@ -47,10 +52,20 @@ describe("Fallback Function", function () {
   describe("Sends Ether", async () => {
     it("invokes the receive function", async () => {
       // No data is sent with the function call
-      await expect(callFallback.payContract(fallback.address, {value: toWei(1)})).to.emit(fallback, "ReceiveEvent");
+
+      await expect(callFallback.payContract(fallback.address, "0x", {value: toWei(1)})).to.emit(
+        fallback,
+        "ReceiveEvent"
+      );
     });
 
     it("invokes the fallback function", async () => {
+      await expect(callFallback.payContract(fallback.address, "0x01", {value: toWei(1)})).to.emit(
+        fallback,
+        "FallbackEvent"
+      );
+
+      // Using fake ABI
       // create a fake fallback contract to make hardhat beleive this function signature does exsist
       const nonExistentFuncSignature = "nonExistentFunction(string)";
       const fakeFallbackFunction = new ethers.Contract(
@@ -61,6 +76,21 @@ describe("Fallback Function", function () {
 
       const tx = await fakeFallbackFunction[nonExistentFuncSignature]("message");
       await expect(tx).to.emit(fallback, "FallbackEvent");
+
+      let rc = await tx.wait();
+      let event = rc.events.find(event => event.event === "FallbackEvent");
+      const [eventType, sender, value, data] = event.args;
+      expect(eventType).to.eq("Fallback");
+      expect(sender).to.eq(deployer.address);
+      expect(value).to.eq(toWei(0));
+    });
+  });
+
+  describe("Returning the function selector", async () => {
+    it("returns the function selector", async () => {
+      let funcSelect = await callFallback.functionSelector("functionSelector(string)");
+      let callData = callFallback.interface.encodeFunctionData("functionSelector", ["message"]);
+      expect(funcSelect).to.eq(removeFunctionParameters(callData));
     });
   });
 });
