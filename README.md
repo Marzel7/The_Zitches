@@ -2,12 +2,6 @@
 
 This branch demonstates how to sign messages using ether.js.
 
-### formula
-
-​
-
----
-
 ### install
 
 ```bash
@@ -15,15 +9,6 @@ git clone https://github.com/kkeaveney/The_Zitches.git dex
 cd dex
 git checkout dex
 yarn install
-```
-
-### Environment
-
-```
-
-
-
-
 ```
 
 ### Tests
